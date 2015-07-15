@@ -68,12 +68,12 @@ rnorm(4)
 rnorm(4, mean=3, sd=3)
 #
 y <- rnorm(200)
-hist(y)
+hist(y, col='pink')
 y <- rnorm(200, mean=-2, sd=4)
 hist(y)
 #
 qqnorm(y)
-qqline(y) #line through q-q plot
+qqline(y, col='green') #line through q-q plot
 
 
 
@@ -84,8 +84,8 @@ qqline(y) #line through q-q plot
 # dt = height of t distrbution
 x <- seq(-20, 20, by=0.5)
 y <- dt(x, df=10)
-plot(x, y)
-y <- df(x, df=50)
+plot(x, y, type='l')
+y <- dt(x, df=50)
 plot(x, y)
 
 

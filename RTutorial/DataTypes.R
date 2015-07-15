@@ -16,10 +16,24 @@ sortedUp
 sortedDown = sort(unsorted, decreasing=TRUE)
 sortedDown
 
+# Ignore missing NA values
+a <- c(1,2,3,4, NA)
+sum(a)
+sum(a, na.rm=TRUE)
+
+is.na(a)
+a[!is.na(a)]
+
+#removing entries matching certain criteria
+a = c(6,2,5,3,8,2)
+a[a<6]
+
 " Other functions: 
 min, max, sum, mean, var, sd, sqrt, sort, median, summary
 log, exp"
 quartile(unsorted)
+
+
 
 # numbers
 a <- 3
