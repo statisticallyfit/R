@@ -101,7 +101,8 @@ summary(dataFrame)
 dataFrame$first
 dataFrame$second
 dataFrame$f
-
+dataFrame[[3]]
+dataFrame[3]
 
 # ------------------- Logical ------------------- 
 "  | entry-wise or

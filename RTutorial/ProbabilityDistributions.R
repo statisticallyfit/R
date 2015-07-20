@@ -184,3 +184,95 @@ qchisq(v, df=25)
 # rchisq(number, df=df0)
 rchisq(3, df=10)
 rchisq(3, df=70)
+
+
+# **************** F Distribution ***************
+curve(df(x, 6, 11), xlim=c(0, 10), main="F Distribution")
+curve(df(x, 19, 5), xlim=c(0, 10), main="F Distribution")
+df(2, df1=19, df2=5)
+
+pf(2, df1=19, df2=5)
+
+qf(0.05, df1=19, df2=5)
+
+rf(10, df1=19, df2=5)
+
+
+# **************** Hypergeometric Distribution ***************
+
+"Suppose you have an urn with 30 balls, 10 red and 20 white. You
+select 15 at random. What is the probability that the 
+sample contains 8 red? contains 8 or more red?
+
+http://stat.ethz.ch/R-manual/R-patched/library/stats/
+html/Hypergeometric.html
+http://www.math.grin.edu/~mooret/courses/math335/binom-hyper.html"
+
+dhyper(x=8, m=10, n=20, k=15)
+1-phyper(7, 10, 20, 15)
+qhyper(0.10, 10, 20, 15)
+rhyper(10, 10, 20, 15)
+
+#sample <- rhyper(100, 10, 20, 15)
+#hist(sample, breaks=seq(-0.5, 6.5, 1), col='light grey', border='grey')
+
+
+# **************** Geometric Distribution ***************
+
+"https://stat.ethz.ch/R-manual/R-devel/library/stats/html/
+Geometric.html"
+
+x = seq(0, 10, by=1)
+y = dgeom(x, 0.2)
+plot(x, y)
+
+"
+P(X = x) = pq^(x-1)
+P(X <= x) = 1-q^x
+"
+
+" What is the probability an agent must select 4 people before he
+finds one who attended the last game? (p(person attends game) =0.2"
+dgeom(4-1, 0.2) # = geometpdf(4, 0.2) = 0.1024
+
+" What is probability he must select more than 6 people before
+finding one who attended the game?"
+1-pgeom(6-1, 0.2) # = 1-geometcdf(0.2, 6) = 0.262
+
+"Products are made by a machine with a 3% defective rate. What
+is probability that first defective occurs in fifth item?"
+dgeom(5-1, 0.03)
+
+"What is probability that first defective occurs in first five
+inspections?"
+# P(X <= 5) = 1- geometcdf(0.03, 5)
+pgeom(4, 0.03) #num failures that occur before first success
+
+
+par (mfrow = c(2,2))
+# dp par(mfrow=c(1,1)) to get back normal view
+x<-0:4
+plot(x+1, dgeom(x, prob = .95),
+     xlab = "X = Number of Trials", ylab = "P(X=x)",
+     type = "h", main = "First Ready Terminal, p = .95")
+x<-0:9
+plot(x+1, dgeom(x, prob = .5),
+     xlab = "X = Number of Trials", ylab = "P(X=x)",
+     type = "h", main = "First Head, p = .5")
+x<- 0:19
+plot(x+1, dgeom(x, prob = .2),
+     xlab = "X = Number of Trials", ylab = "P(X=x)",
+     type = "h", main = "First Defective, p = .2")
+x<- seq(0, 400, 50)
+plot(x+1, dgeom(x, prob = .01),
+     xlab = "X = Number of Trials", ylab = "P(X=x)",
+     type = "h", main = "First Bit in Error, p = .01")
+
+
+"Production line has 20% defective rate. What is the min number
+of inspections necessary so probability of finding a defective
+is more than 75%?"
+qgeom(0.75, 0.2) # = after 6 non-defectives, 
+#there is at least 75% chance of obtaining the first defective.
+
+
