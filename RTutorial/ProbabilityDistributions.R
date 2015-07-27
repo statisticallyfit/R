@@ -152,8 +152,6 @@ rbinom(5, 100, 0.7)
 
 
 
-
-
 # **************** Chi-Squared Distribution ***************
 
 # dchisq(x, df=df0)
@@ -209,6 +207,10 @@ html/Hypergeometric.html
 http://www.math.grin.edu/~mooret/courses/math335/binom-hyper.html"
 
 dhyper(x=8, m=10, n=20, k=15)
+dhyper(x=3, m=7, n=5, k=4)
+dhyper(x=3, m=5, n=5, k=3)
+dhyper(x=1, m=2, n=8, k=5)
+1-dhyper(x=0, m=3, n=9, k=3)
 1-phyper(7, 10, 20, 15)
 qhyper(0.10, 10, 20, 15)
 rhyper(10, 10, 20, 15)
@@ -276,3 +278,22 @@ qgeom(0.75, 0.2) # = after 6 non-defectives,
 #there is at least 75% chance of obtaining the first defective.
 
 
+
+
+# **************** Multinomial Distribution ***************
+dmultinom(x=c(3, 2, 1), size=6, prob=c(0.5, 0.3, 0.2)) # x, size, prob
+dmultinom(x=c(4, 3, 2, 1), size=10, prob=c(0.54, 0.11, 0.34, 0.01))
+#pmultinom() # x, size, prob
+rmultinom(n=20, size=6, prob=c(0.5, 0.3, 0.2)) # n, size, prob
+
+
+
+# **************** Poisson Distribution ***************
+#dpois(x, lambda)
+#ppois(q, lambda)
+#qpois(p, lambda)
+#rpois(n, lambda)
+dpois(x=3, lambda=2/5)
+ppois(q=3, lambda=3)
+1 - ppois(q=2, lambda=3)
+1 - ppois(q=4, lambda=3)
