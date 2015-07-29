@@ -49,3 +49,5 @@ harmonic.mean <- function(x) {
   length(x)/sum(1/x)
 }
 harmonic.mean(c(1, 2, 4, 1))
+
+detach(yvals)

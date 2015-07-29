@@ -54,3 +54,42 @@ for(n in seq(from=3, to=31, by=2)){
 }
 
 
+# SE (standard error) = s/sqrt(n)
+sqrt(var(gardenA)/10)
+sqrt(var(gardenB)/10)
+sqrt(var(gardenC)/10)
+
+
+# Confidence intervals: population mean is between...
+mean(gardenB) + c(1,-1)*qt(0.025, df=9)*sqrt(var(gardenB)/10)
+
+
+# Bootstrap: find means from samples (with replacement). Then find
+# a confidence interval based on range of estimated means. 
+data <- read.csv("data/skewdata.csv")
+attach(data)
+data
+# plan: for sample sizes 5 to 30, take 10,000 independent samples
+plot(c(0,30), c(0,60), type="n", xlab="Sample size", 
+     ylab="Confidence interval")
+for(k in seq(from=5, to=30, by=3)){
+  a <- numeric(10000)
+  for(i in 1:10000){
+    a[i] <- mean(sample(values, k, replace=TRUE))
+  }
+  points(c(k, k), quantile(a, c(0.025, 0.975)), 
+         type="b", pch=21, bg="red")
+}
+
+# bootstrapped intervals
+xv <- seq(5, 30, 0.1)
+yv <- mean(values) + 1.96*sqrt(var(values)/xv)
+lines(xv, yv, col="blue")
+yv <- mean(values) - 1.96*sqrt(var(values)/xv)
+lines(xv, yv, col="blue")
+
+# t intervals
+yv <- mean(values) - qt(0.975, xv-1)*sqrt(var(values)/xv)
+lines(xv, yv, lty=2, col="green")
+yv <- mean(values) + qt(0.975, xv-1)*sqrt(var(values)/xv)
+lines(xv, yv, lty=2, col="green")
