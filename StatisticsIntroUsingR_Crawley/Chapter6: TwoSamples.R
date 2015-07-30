@@ -128,21 +128,8 @@ res$expected
 # formula = (a+b)!(c+d)!(a+c)!(b+d)!/(a!b!c!d!n!)
 
 # first make the table:
-situation1 <- matrix(c(6,2,4,8), byrow=T, nrow=2)
-s1 <-situation1
-situation1 <- cbind(s1, c(sum(s1[1,]), sum(s1[2,])))
-situation1
-x <- c("Tree A", "Tree B")
-colnames(situation1) = c(x, "    | ROW TOTALS")
-situation1
-s1 <-situation1
-situation1 <- rbind(s1, c(sum(s1[,1]), sum(s1[,2]), sum(s1[,3])))
-rownames(situation1) = c("With ants", "Without ants", "COL TOTALS |")
-situation1
-
-
 makeTable <- function(values, colNames, rowNames){
-  table <- matrix(args, byrow=T, nrow=2)
+  table <- matrix(values, byrow=T, nrow=2)
   
   table <- cbind(table, c(sum(table[1,]), sum(table[2,])))
   colnames(table) = c(colNames, "ROW TOTALS")
@@ -153,30 +140,48 @@ makeTable <- function(values, colNames, rowNames){
   table
 }
 
-
 # Method 1 for pvalue
 situation1 <- makeTable(c(6,2,4,8), c("Tree A", "Tree B"), c("With ants", "Without ants"))
-
-
-
 num <- factorial(8)*factorial(12)*factorial(10)*factorial(10)
 p1 <- num/(factorial(6)*factorial(4)*factorial(2)*factorial(8)*factorial(20))
 p1
 
 # more extreme case: there could have been 1 tree with ants, so the other numbers are shifted
-
+situation2 <- makeTable(c(7,1,3,9), c("Tree A", "Tree B"), c("With ants", "Without ants"))
 p2 <- num/(factorial(7)*factorial(1)*factorial(3)*factorial(9)*factorial(20))
 p2
 
 # the last extreme case: no ants on tree B
+situation3 <- makeTable(c(8,0,2,10), c("Tree A", "Tree B"), c("With ants", "Without ants"))
+situation3
 p3 <- num/(factorial(8)*factorial(2)*factorial(10)*factorial(20))
 p3
 p.value = 2*(p1+p2+p3) # doubled since it could have been tree A with fewer ants
 p.value
 
-fisher.test(situation1)
-
 
 # Method 2 for p value
-dhyper()
+values <- matrix(c(6,2,4,8), byrow=T, nrow=2)
+values
+fisher.test(values)
 
+
+# Method 3 for p value
+2*sum(dhyper(6:8, m=8, n=12, k=10)) #x, m, n, k
+2*sum(dhyper())
+situation1
+
+
+
+
+cows.bats <- makeTable(c(15,6,7,322), c("In estrous", "Not in estrous"), c("bitten by bat", "not bitten by bat"))
+cows.bats
+# these two are complements
+sum(dhyper(15:21, m=21, n=329, k=22))
+sum(dhyper(6:21, m=21, n=329, k=328))
+# these other two are complements
+sum(dhyper(7:329, m=329, n=21, k=))
+
+1-phyper(q=14, m=21, n=329, k=22)
+
+sum(dhyper(7:329, m=329, n=21, k=22))

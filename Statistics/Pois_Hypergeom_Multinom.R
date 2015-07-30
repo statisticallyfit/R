@@ -48,6 +48,7 @@ dbinom(x=5, size=150, prob=8/2000)
 choose(5, 1)*choose(4, 1)*choose(5,1)*choose(7,1)/choose(21,4)
 # 18
 1-(dhyper(x=0, m=5, n=20, k=5) + dhyper(x=1, m=5, n=20, k=5))
+1-phyper(1, 5, 20, 5) # same
 # 19 
 choose(10, 2)*choose(4,1)*choose(2,0)/choose(16,3)
 # 20
