@@ -91,7 +91,7 @@ stream
 t.test(down, up) # assuming independence, there is no sewage outfall impact on biodiversity score
 t.test(down, up, paired=TRUE) # but if paired, there is significant impact
 t.test(up-down) # test on differences of pairs
-
+detach(stream)
 
 # Binomial Test: 
 # how likely is it to have 8 of 9 better on the new regime if there is no difference in the training regimes?
@@ -123,7 +123,7 @@ res$expected
 
 
 
-# Fisher's Exact Test: for 2x2 tables + when one or more expected frequencies <5
+# Fisher's Exact Test: when one or more expected frequencies <5
 # f.exact.statistic = the probability of any one particular outcome
 # formula = (a+b)!(c+d)!(a+c)!(b+d)!/(a!b!c!d!n!)
 
@@ -168,20 +168,76 @@ fisher.test(values)
 
 # Method 3 for p value
 2*sum(dhyper(6:8, m=8, n=12, k=10)) #x, m, n, k
-2*sum(dhyper())
-situation1
 
-
-
-
+# Figure this out (pdf at top of page)
 cows.bats <- makeTable(c(15,6,7,322), c("In estrous", "Not in estrous"), c("bitten by bat", "not bitten by bat"))
 cows.bats
 # these two are complements
 sum(dhyper(15:21, m=21, n=329, k=22))
 sum(dhyper(6:21, m=21, n=329, k=328))
-# these other two are complements
-sum(dhyper(7:329, m=329, n=21, k=))
 
-1-phyper(q=14, m=21, n=329, k=22)
 
-sum(dhyper(7:329, m=329, n=21, k=22))
+# MEthod 4
+fisher.test(matrix(c(6,2,4,8), byrow=T, nrow=2))
+
+
+# nicer same way
+table <- read.csv("data/fisher.csv")
+table
+attach(table)
+fisher.test(tree, nests)
+detach(table)
+
+
+
+
+# Correlation and Covariance
+# apply to continuous variables
+# r = cov(x,y)/sqrt(var(x)var(y))
+# cov(x,y) = Exp((x-mean(x))(y-mean(y)))
+
+data <- read.csv("data/twosample.csv")
+attach(data)
+data
+plot(x,y, pch=19, col="orange")
+cov(x,y)
+var(x,y)
+r <- cov(x,y)/sqrt(var(x)*var(y))
+r
+cor(x,y)
+detach(data)
+
+# EXAMPLE
+paired <- read.csv("data/water.table.csv")
+attach(paired)
+paired
+# is there correlation between summer and winter table depths across these locations A - I?
+cor(Summer, Winter)
+plot(Summer, Winter, pch=19, col="violet")
+cor.test(Summer, Winter) # correlation is significant
+
+# Calculating correlation the hard way - same as cor(x,y)
+varS <- var(Summer)
+varW <- var(Winter)
+varD <- var(Summer-Winter)
+# r = (var(y) + var(z) - var(y-z))/(2*sqrt(var(y)*var(z)))
+r = (varS + varW - varD)/(2*sqrt(varS * varW))
+r
+# are the samples independent? If so, then this is TRUE
+varD
+varS + varW
+detach(paired)
+
+
+# Scale-Dependent correlations
+data <- read.csv("data/productivity.csv")
+attach(data)
+data
+plot(productivity, mammals, pch=16, col="blue")
+cor(productivity, mammals)
+cor.test(productivity, mammals)
+cor.test(productivity, mammals, method="spearman")
+cor.test(productivity, mammals, method="kendall")
+
+# but prod and mammals are negatively correlated when viewing the different species
+plot(productivity, mammals, pch=16, col=as.numeric(region))
