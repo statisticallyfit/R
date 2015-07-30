@@ -297,3 +297,19 @@ dpois(x=3, lambda=2/5)
 ppois(q=3, lambda=3)
 1 - ppois(q=2, lambda=3)
 1 - ppois(q=4, lambda=3)
+
+
+
+# **************** Wilcoxon Distribution ********************
+#x <- -1:(4*6+1)
+plot(x, dwilcox(x, 4, 6), type="l", lwd=4, col="goldenrod1")
+x <- -101:101 # (10*10+1 are the limits)
+points(x, dwilcox(x, 10,10), type="l", lwd=4, col="cyan")
+#x <- -5:(21*3+1)
+points(x, dwilcox(x, 21,3), type="l", lwd=4, col="red")
+points(x, dwilcox(x, 2, 3), type="l", lwd=4, col="hotpink")
+points(x, dwilcox(x, 3, 21), type="l", lwd=4, col="chartreuse")
+x <- -401: 401
+points(x, dwilcox(x, 20, 20), type="l", lwd=4, col="purple3")
+
+# basic wilcox graph formula: function(x, n1, n2) 
