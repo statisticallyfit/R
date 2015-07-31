@@ -64,5 +64,12 @@ f.ratio
 1-pf(f.ratio, df1=1, df2=7) # yes
 
 
-# Standard error of slope
+# Standard error of slope (b)
 # SEb = sqrt(varE/SSX), where varE = SSE/(n-2)
+# NOTE: when SSX (variance of x)
+SEb = sqrt(varE/SSX)
+SEb
+
+
+# Standard error of intercept (a)
+# SEa = sqrt(varE * sum(x^2)/ (n*SSX))
