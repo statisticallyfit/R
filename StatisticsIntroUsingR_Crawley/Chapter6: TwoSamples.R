@@ -192,6 +192,7 @@ detach(table)
 
 
 # Correlation and Covariance
+
 # apply to continuous variables
 # r = cov(x,y)/sqrt(var(x)var(y))
 # cov(x,y) = Exp((x-mean(x))(y-mean(y)))
@@ -241,3 +242,4 @@ cor.test(productivity, mammals, method="kendall")
 
 # but prod and mammals are negatively correlated when viewing the different species
 plot(productivity, mammals, pch=16, col=as.numeric(region))
+detach(data)
