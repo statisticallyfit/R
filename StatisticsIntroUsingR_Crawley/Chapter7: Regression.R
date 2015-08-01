@@ -250,11 +250,10 @@ detach(deer)
 # Generalized Additive Models: usedful when y and x are nonlinear but we have no model for them
 library(mgcv)
 library(nlme)
-
+setwd("/datascience/projects/statisticallyfit/github/learningprogramming/R/StatisticsIntroUsingR_Crawley")
 hump <- read.csv("data/hump.csv")
 attach(hump)
 hump
-y
-detach(hump)
+
 detach(package:mgcv)
 detach(package:nlme)
