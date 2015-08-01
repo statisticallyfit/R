@@ -255,5 +255,39 @@ hump <- read.csv("data/hump.csv")
 attach(hump)
 hump
 
-detach(package:mgcv)
-detach(package:nlme)
+# Fit the generalized additive model as a smothed function of x (s(x))
+model <- gam(y ~ s(x))
+model
+
+plot(model, col="blue")
+points(x,   y - mean(y),  pch=20, col="red")
+
+summary(model) #significant slope of s(x)
+mean(y)
+
+summary(lm(y ~ x)) # non significant slope of x
+
+detach(hump)
+
+
+# Influence
+x <- c(2,3,3,3,4)
+y <- c(2,3,2,1,2)
+windows(7,7)
+par(mfrow=c(1,1))
+plot(x, y, xlim=c(0, 8), ylim=c(0, 8)) # no relation
+
+# add an outlier at (7,6)
+x <- c(x, 7)
+y <- c(y, 6)
+plot(x, y, xlim=c(0, 8), ylim=c(0, 8)) # no relation
+abline(lm(y ~ x), col="blue", lwd=3)
+
+# Measure of leverage: hi = 1/n + (x - x-bar)^2/(sum(x - x-bar)^2), denominator = SSX
+# a point is highly influential if hi > 2p/n, where p = number of parameters in the model
+hi <- 1/length(x) + (x - mean(x))^2/(sum((x - mean(x))^2))
+hi
+hi.limit = 2*1/length(x) # is this correct??
+
+model <- lm(y ~ x)
+influence.measures(model)
