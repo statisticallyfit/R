@@ -7,7 +7,7 @@
 in a multi-way ANOVA to test if the response to one factor depends 
 on the level of another factor. "
 
-setwd("/datascience/projects/statisticallyfit/github/learningprogramming/R/StatisticsIntroUsingR_Crawley")
+setwd("/datascience/projects/statisticallyfit/github/learningprogramming/R/RStats/learnstats/crawleybookcode")
 
 # (1) ONE-WAY ANOVA
 oneway <- read.csv("data/oneway.csv")
@@ -37,7 +37,7 @@ for(i in 1:length(index)) {
 
 
 # ANOVA analysis: is this difference in mean ozone in A and B significantly big? Or could it have occurred by chance alone?
-# IMPORTANT: if means are significantly different, sum of squares from individual treatment means is smaller than sum of squares from overall mean
+# IMPORTANT: if means are significantly different, then variation within sample is smaller than variation between means of all samples. 
 
 # SSE = variation within the sample (made of many SSEs for each sample)
 # SSA = variation between each sample mean
@@ -62,6 +62,7 @@ f.ratio <- varA/varE; f.ratio
 
 # Do the easy way
 summary(aov(ozone~garden))
+summary(lm(ozone~garden))
 # df residuals = k(n-1) = (2 garden levels) * (10 replicates per garden - 1) = 2(10-1) = 2* 9 = 18
 
 
@@ -79,4 +80,25 @@ plot(aov(ozone~garden))
 cbind(ozone[garden=="A"], ozone[garden=="B"])
 tapply(ozone, garden, sum)
 T1 <- 30; T2 <- 50
-# SSA = sum(Ti^2)/n - (sum(y))^2/(kn)
+
+# shortcut SSA = sum(Ti^2)/n - (sum(y))^2/(kn)
+SSA <- (30^2 + 50^2)/10 - (sum(ozone))^2/(2*10); SSA
+
+# long way SSA <- n * sum((individual means - overall mean)^2)
+SSA <- 10 * sum((mean(ozone[garden=="A"]) - mean(ozone))^2 + 
+           (mean(ozone[garden=="B"]) - mean(ozone))^2); SSA
+
+# SSY = sum((y - overall mean)^2)
+SSY <- sum((ozone - mean(ozone))^2); SSY
+
+# SSE = sum((y - individual mean)^2) for each of the k levels in the factor
+SSE
+
+
+
+
+# Effect sizes of different factor levels
+summary(lm(ozone~garden))
+summary.lm(aov(ozone~garden)) # these two lines are same things
+
+# pg 160

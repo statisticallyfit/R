@@ -34,6 +34,7 @@ adf.test(d.Y, k=0)
 adf.test(d.Y)
 
 # ACF and PACF
+par(mfrow=c(2,2))
 acf(Y)
 pacf(Y)
 acf(d.Y)
@@ -66,7 +67,7 @@ arima(d.Y, order = c(1,0,3))
 
 # ARIMA(2,1,3)
 arima(d.Y, order = c(2,0,3))
-
+par(mfrow=c(1,1))
 # ARIMA(1,0,1) forecasting
 mydata.arima101 <- arima(Y, order = c(1,0,1))
 mydata.pred1 <- predict(mydata.arima101, n.ahead=100)
