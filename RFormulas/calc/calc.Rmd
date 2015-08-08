@@ -7,4 +7,6 @@ output: pdf_document
 \[ \int \sin(x)dx = -\cos(x)\]
 
 **Limit Properties**
-\[ \lim_{x\to\c} (f(x) \pm g(x)) \]
+\[ \lim_{x\to c} (f(x) + g(x)) = L + M\]
+\[ \lim_{x\to c} (f(x) - g(x)) = L - M\]
+\[ \lim_{x\to c} (\frac12) = \frac12\]
