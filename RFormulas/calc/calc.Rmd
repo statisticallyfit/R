@@ -1,0 +1,10 @@
+---
+title: "Calculus Formulas"
+output: pdf_document
+---
+
+**Integrals of Trig Functions**
+\[ \int \sin(x)dx = -\cos(x)\]
+
+**Limit Properties**
+\[ \lim_{x\to\c} (f(x) \pm g(x)) \]

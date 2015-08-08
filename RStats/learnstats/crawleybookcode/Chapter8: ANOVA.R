@@ -195,4 +195,7 @@ shade <- c(0.2, 0.6, 0.9)
 # R puts the legend using the top left hand corner of the box of the legend
 barplot(tapply(gain, list(diet, supplement), mean), beside=TRUE, 
         ylab="Weight gain", xlab="Supplement", ylim=c(0,30))
-legend(locator(1), labels, gray(shade))
+legend(locator(1), labels, gray(shade)) 
+
+# inspect the mean values
+tapply(gain, list(diet, supplement), mean)

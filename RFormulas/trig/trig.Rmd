@@ -1,0 +1,55 @@
+---
+title: "Trigonometric Identities"
+output: pdf_document
+---
+**Basic Identities**
+\[ \sin^2(\theta) + \cos^2(\theta) = 1 \]
+\[ \sec^2(\theta) = 1 + \tan^2(\theta) \]
+\[ \csc^2(\theta)  = 1 + \cot^2(\theta) \]
+
+**Sums and Differences**
+\[ \cos(\alpha + \beta) = \cos(\alpha)\cos(\beta) - \sin(\alpha)\sin(\beta) \]
+\[ \cos(\alpha - \beta) = \cos(\alpha)\cos(\beta) + \sin(\alpha)\sin(\beta) \]
+\[ \sin(\alpha + \beta) = \sin(\alpha)\cos(\beta) + \cos(\alpha)\sin(\beta) \]
+\[ \sin(\alpha - \beta) = \sin(\alpha)\cos(\beta) - \cos(\alpha)\sin(\beta) \]
+\[ \sin(\frac\pi2 - \theta) = \cos(\theta) \]
+\[ \cos(\frac\pi2 - \theta) = \sin(\theta) \]
+
+\[ \tan(\alpha+\beta) = \frac {\tan(\alpha) + \tan(\beta)}{1 - \tan(\alpha)\tan(\beta)} \]
+\[ \tan(\alpha-\beta) = \frac {\tan(\alpha) - \tan(\beta)}{1 + \tan(\alpha)\tan(\beta)} \]
+
+**Double Angle**
+\[ \sin(2\theta) = 2\sin(\theta)\cos(\theta) \]
+\[ \cos(2\theta) = \cos^2(\theta) - \sin^2(\theta) \]
+\[ \cos(2\theta) = 2\cos^2(\theta) - 1 \]
+\[ \cos(2\theta) = 1 - 2\sin^2(\theta) \]
+\[ \tan(2\theta) = \frac {2\tan(\theta)}{1 - \tan^2(\theta)} \]
+
+**Half Angle**
+\[ \sin^2(\theta) = \frac {1 - \cos(2(\theta))}{2} \]
+\[ \cos^2(\theta) = \frac {1 + \cos(2(\theta))}{2} \]
+
+**Inverse**
+\[ \cos^{-1}(\theta) = \frac\pi2 - \sin^{-1}(\theta)\]
+\[ \cot^{-1}(\theta) = \frac\pi2 - \tan^{-1}(\theta)\]
+\[ \csc^{-1}(\theta) = \frac\pi2 - \sec^{-1}(\theta)\]
+
+**Product-Sum**
+\[ \cos(\alpha)\cos(\beta) = \frac{\cos(\alpha-\beta) + \cos(\alpha + \beta)}{2}\]
+\[ \sin(\alpha)\sin(\beta) = \frac{\cos(\alpha-\beta) - \cos(\alpha + \beta)}{2}\]
+\[ \sin(\alpha)\cos(\beta) = \frac{\sin(\alpha+\beta) + \sin(\alpha- \beta)}{2}\]
+\[ \cos(\alpha)\sin(\beta) = \frac{\sin(\alpha+\beta) - \sin(\alpha - \beta)}{2}\]
+\[ \sin(\alpha-\beta)\sin(\alpha+\beta) = \sin^2(\alpha) - \sin^2(\beta)\]
+
+\[ \sin(\alpha) + \sin(\beta) = 2\sin\left(\frac{\alpha+\beta}{2}\right)\cos\left(\frac{\alpha-\beta}{2}\right)\]
+\[ \sin(\alpha) - \sin(\beta) = 2\cos\left(\frac{\alpha+\beta}{2}\right)\sin\left(\frac{\alpha-\beta}{2}\right)\]
+\[ \cos(\alpha) + cos(\beta) = 2\cos\left(\frac{\alpha+\beta}{2}\right)\cos\left(\frac{\alpha-\beta}{2}\right)\]
+\[ \cos(\alpha) - cos(\beta) =  - 2\sin\left(\frac{\alpha+\beta}{2}\right)\sin\left(\frac{\alpha-\beta}{2}\right)\]
+
+**Law Of Sines**
+\[ \frac{\sin(\alpha)}{a} = \frac{\sin(\beta)}{b} = \frac{\sin(\omega)}{w}\]
+**Law Of Cosines**
+\[ a^2 = b^2 + c^2 - 2bc\cos(\alpha) \]
+\[ b^2 = a^2 + c^2 - 2ac\cos(\beta) \]
+\[ c^2 = a^2 + b^2 - 2ab\cos(C) \]
+
