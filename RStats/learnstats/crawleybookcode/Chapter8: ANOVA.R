@@ -97,8 +97,102 @@ SSE
 
 
 
-# Effect sizes of different factor levels
+# Effect sizes (treatment contrasts)
+# a = overall mean, c = meangardenB - overall mean, b = meangardenA - overall mean. 
+a = mean(ozone); a
+# treatment contrast procedure: the factor level that comes first in alphabet is set equal to the intercept. The other parameters are differences between this mean and other relevant means. 
+intercept <- mean(ozone[garden=="A"]); intercept
+slope <- mean(ozone[garden=="B"]) - mean(ozone[garden=="A"]); slope
+
+SEintercept <- sqrt(var(ozone[garden=="A"])/10); SEintercept
+SEslope <- sqrt(var(ozone[garden=="B"])/10 + var(ozone[garden=="A"])/10); SEslope
+
 summary(lm(ozone~garden))
 summary.lm(aov(ozone~garden)) # these two lines are same things
 
-# pg 160
+# INTERPRET: 
+# intercept is 3 = mean for garden A because A comes before B in alphabet
+# slope is 2 = so the mean ozone in gardenB is 2 pphm higher than in garden A
+# so mean for garden B = slope + intercept 
+# could find means this way: 
+tapply(ozone, garden, mean)
+
+detach(oneway)
+
+
+
+
+
+# Plots for Interpreting one way ANOVA - box plot or barplot with error bars
+comp <- read.csv("data/competition.csv")
+comp
+attach(comp)
+
+# boxplot
+plot(clipping, biomass, xlab="Competition treatment", ylab="Biomass", col="dodgerblue", notch=TRUE)
+
+# barplot
+heights <- tapply(biomass, clipping, mean)
+barplot(heights, col="green", ylim=c(0,700), ylab="mean biomass", xlab="competition treatment")
+
+error.bars <- function(y, error) {
+  x <- barplot(y, plot=FALSE) # finds x-coordinate of bar centers
+  numErrorBars <- length(y)
+  for(i in 1:numErrorBars)
+    arrows(x[i], y[i]-error, x[i], y[i]+error, code=3, angle=90, length=0.15)
+}
+# code=3 means draw heads at both ends of the arrow
+# y = the list of bar lengths
+# length=0.15 means to shorted the heads of the error bars
+
+
+# Find what error values to use for bar lengths
+# (1) SE mean approach: even if they do not overlap, we cannot be sure the means are signficantly different (must pass a higher threshold)
+model <- aov(biomass~clipping)
+summary(model)
+table(clipping)
+# so the standard error of the mean = sqrt(var of residuals/6)
+SEmean <- sqrt(4961/6); SEmean
+se <- rep(SEmean, 5) #rep 5 times since there were 5 factors
+
+error.bars(heights, se)
+
+# (2) confidence interval approach: even if they do overlap, they may still be significantly different (must pass lower threshold)
+ci <- SEmean*qt(0.975, df=5)
+barplot(heights, col="green", ylim=c(0,700),
+        ylab="mean biomass", xlab="competition treatment")
+error.bars(heights, ci)
+# now all bars overlap, so no significant difference between means (understand more)
+
+
+# (3) LSD approach
+
+# SE mean approach: means are NOT different if bars overlap, guaranteed
+# CI approach: means ARE different when bars do not overlap
+#LSD method: best of both: means ARE different when bars do not overlap AND means are not different when bars do overlap
+lsd <- qt(0.975, df=10) * sqrt(2*4961/6); lsd # the two means are significantly different if they differ by 90.61 or more
+lsd.bars <- rep(lsd, 5)/2; lsd.bars
+
+barplot(heights, col="green", ylim=c(0,700),
+        ylab="mean biomass", xlab="competition treatment")
+error.bars(heights, ci)
+
+detach(comp)
+
+
+
+# Factorial Experiments
+# have two or more factors, each with two or more levels with replication for each combination of factor level
+# goal is to find if factors depend on each other
+
+weights <- read.csv("data/growth.csv")
+weights
+attach(weights)
+
+# add legend
+labels <- levels(diet); labels
+shade <- c(0.2, 0.6, 0.9)
+# R puts the legend using the top left hand corner of the box of the legend
+barplot(tapply(gain, list(diet, supplement), mean), beside=TRUE, 
+        ylab="Weight gain", xlab="Supplement", ylim=c(0,30))
+legend(locator(1), labels, gray(shade))
