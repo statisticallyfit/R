@@ -54,11 +54,13 @@ varE <- SSE/18; varE # error
 varA <- SSA/1; varA # garden
 
 "
- H0: mu1 = mu2 = mu3 .... 
+ H0: mu1 = mu2  
  H1: at least one mean from the sample groups is different"
-# If the variation between sample means is significantly greater than variation within each sample, then the  means must be different. 
+# If the variation between sample means is significantly greater 
+# than variation within each sample, then the  means must be 
+# different. 
 f.ratio <- varA/varE; f.ratio
-1 - pf(f.ratio, df1=1, df2=18) # therefore, the two means are significantly different
+1 - pf(f.ratio, df1=1, df2=18) # so, the means are different
 
 # Do the easy way
 summary(aov(ozone~garden))
@@ -199,3 +201,56 @@ legend(locator(1), labels, gray(shade))
 
 # inspect the mean values
 tapply(gain, list(diet, supplement), mean)
+gain ~ diet + supplement + diet:supplement
+model <- aov(gain ~ diet*supplement)
+model
+summary(model)
+
+# draw error bars for the grouped bars
+tapply(gain, list(diet, supplement), length)
+stderror <- sqrt(1.72/4)
+x <- as.vector(barplot(tapply(gain, list(diet, supplement), mean), beside=TRUE, ylim=c(0,30)))
+y <- as.vector(tapply(gain, list(diet, supplement), mean))
+z <- rep(stderror, length(x))
+for(i in 1:length(x)){
+  arrows(x[i], y[i] - z[i], x[i], y[i]+z[i], length=0.05, code=3, angle=90)
+}
+legend(locator(1), labels, gray(shade))
+
+
+# ANOVA doesn't show effect sizes
+summary.lm(model) # this is better, but still complicated...
+# model simplification
+model2 <- lm(gain ~ diet + supplement)
+summary(model2)
+
+# since the supplements aren't significantly different from each other, reduce them
+# agrimore and supersupp == best, control and supergain == worst
+supp2 <- factor(supplement); supp2
+levels(supp2)
+levels(supp2)[c(1,4)] <- "best"
+levels(supp2)[c(2,3)] <- "worst"
+levels(supp2) # see the result of renaming
+
+# now fit the simpler model (model3)
+model3 <- lm(gain ~ diet+supp2)
+anova(model2, model3) # compare the two models
+# interpret: model3 has saved 2 df and is not significantly worse than the more complex model2 (since p = 0.158)
+
+summary(model3)
+
+detach(weights)
+
+
+
+
+
+# SPlit plot experiments
+
+# crop yield (levels: irrigated, not irrigated)
+# sowing density (levels: low, medium, high)
+# fertilizer application (levels: low, medium, high)
+
+yields <- read.csv("data/splityield.csv")
+attach(yields)
+yields

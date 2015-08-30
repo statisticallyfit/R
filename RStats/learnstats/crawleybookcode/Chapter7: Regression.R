@@ -35,7 +35,6 @@ plot(b, sse, type="l", ylim=c(19, 24))
       lines(b, sse)
 b[which(sse==min(sse))]
 
-
 # Doing calculation of b by hand
 
 # b = SSXY/SSX
