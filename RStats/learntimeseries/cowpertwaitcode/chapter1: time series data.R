@@ -148,3 +148,12 @@ New.series = window(Global.ts, start=c(1970, 1), end=c(2005,12))
 New.series
 New.time = time(New.series)
 New.time
+ggplot(data=as.data.frame(cbind(New.series, New.time)), 
+       aes(x=New.time, y=New.series)) +
+  geom_point() + geom_line() +
+  geom_smooth(method=lm)
+
+
+
+
+# Decomposition of series
