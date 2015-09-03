@@ -157,3 +157,14 @@ ggplot(data=as.data.frame(cbind(New.series, New.time)),
 
 
 # Decomposition of series
+autoplot(decompose(Elec.ts)) #method 1
+autoplot(decompose(Elec.ts), type="mult")
+
+# plot(stl(Elec.ts)) --- how to use stl()?
+plot(decompose(Elec.ts)) # method 2
+Elec.decom = decompose(Elec.ts, type="mult")
+plot(Elec.decom)
+
+Trend = Elec.decom$trend
+Seasonal = Elec.decom$seasonal
+ts.plot(cbind(Trend, Trend*Seasonal), lty=1:2)
