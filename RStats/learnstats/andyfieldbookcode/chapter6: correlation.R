@@ -2,10 +2,13 @@ library(ggplot2)
 library(Hmisc); #detach("package:Hmisc")
 library(ggm); #detach("package:ggm")
 
+setwd("/datascience/projects/statisticallyfit/github/learningprogramming/R/RStats/learnstats/andyfieldbookcode")
+getwd()
+
+
 ##install.packages("Hmisc") # installed first 2, not last
 ##install.packages("ggm")
 #install.packages("polycor")
-
 
 
 toffeeData = read.delim("data/Advert.dat")
@@ -56,12 +59,16 @@ cor(examData$Exam, examData$Anxiety, use="pairwise.complete.obs", method="kendal
 
 
 # rcorr() does pairwise exclusion; unchangeable
-rcorr(examData$Exam, examData$Anxiety, type="pearson")
+rcorr(as.vector(examData$Exam), as.vector(examData$Anxiety), type="pearson")
 rcorr(examData, type="pearson")
 
 
+# cor.test is another way to find correlation coefficient
 cor.test(examData$Exam, examData$Anxiety, alt="less", 
          method="pearson", conf.level=0.99)
+
+# correlation matrix with cor()
+cor(examData[, 1:4])
 
 
 
@@ -70,3 +77,10 @@ cor.test(examData$Exam, examData$Anxiety, alt="less",
 # Analyse the data
 examData2 = examData[, c("Exam", "Anxiety", "Revise")]
 cor(examData2)
+# use rcorr to find p valus as well of every correlation coefficient
+examMatrix = as.matrix(examData2)
+rcorr(examMatrix)
+# look at confidence interval of correlation for Exam and Anxiety
+cor.test(examData$Anxiety, examData$Exam)$conf.int
+cor.test(examData$Anxiety, examData$Revise)$conf.int
+cor.test(examData$Revise, examData$Exam)$conf.int
