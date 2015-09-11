@@ -61,3 +61,49 @@ summary(fuel2[, "Carbon"])
 summary(fuel[, "Carbon"])
 sd(fuel2[, "Carbon"])
 sd(fuel[, "Carbon"])
+
+# Autocorrelations
+#ausbeer = read.table("data/beer.csv", dec=",", header=TRUE)
+#ausbeer.ts = ts(ausbeer, start=1956, end=c(1995, 8), freq=12)
+#ausbeer2.ts = window(ausbeer.ts, start=1992) #, end=2006-0.1)
+beer2 = window(ausbeer, start=1992, end=2006-0.1)
+lag.plot(beer2, lags=9, do.lines=FALSE)
+autoplot(acf(beer2, plot=FALSE))
+
+# White noise
+set.seed(30)
+x = ts(rnorm(50))
+autoplot(x, main="White noise", xlab="Time", ylab="Normal values")
+
+# Acf for white noise
+autoplot(acf(x, plot=FALSE))
+
+
+
+
+# 2.3. Simple forecasting methods
+
+# y = contains the time series, h = forecast horizon
+
+# Average method: 
+    # meanf(y, h) 
+  # for cross sectional and time series data
+# Naive method: 
+    # naive(y, h)
+  # the forecast is the last observation in the time series
+# Seasonal naive method: 
+    # snaive(y, h)
+  # forecast is the last observation from same season
+  # of the year (meant for highly seasonal data)
+# Drift method: 
+    # rwf(y, h, drift=TRUE)
+  # like extrapolating the average of the first and last 
+  # observation (called drift) into the future
+
+# Examples
+beerfit1 = meanf(beer2, h=11)
+beerfit2 = naive(beer2, h=11)
+beerfit3 = snaive(beer2, h=11)
+
+autoplot(beerfit1, main="Forecasts for quarterly beer production")
+lines(beerfit2$mean, col=2)
