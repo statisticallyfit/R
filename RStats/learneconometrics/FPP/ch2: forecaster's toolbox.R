@@ -344,3 +344,7 @@ supposedToBeRemainderOfIBMNotInTrainingSet = getRemainingElements3()
 length(unique(supposedToBeRemainderOfIBMNotInTrainingSet))
 length(uniqueTrainingSet)
 length(unique(record))
+
+length(supposedToBeRemainderOfIBMNotInTrainingSet)
+length(trainingSet)
+length(record)
