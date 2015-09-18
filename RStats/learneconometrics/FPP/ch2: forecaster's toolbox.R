@@ -8,6 +8,11 @@ library(GGally)
 library(reshape)
 library(plyr)
 
+
+getwd()
+setwd("/datascience/projects/statisticallyfit/github/learningprogramming/R/RStats/learneconometrics/FPP")
+
+
 melsyd
 autoplot(melsyd[, "Economy.Class"], main="Economy class 
          passengers: Melbourne-Sydney", xlab="Year", 
@@ -283,8 +288,59 @@ accuracy(djfit4, dowjones3)[2, c(2,3,5,6)]
 # 3a ---
 autoplot(ibmclose, main="IBM stock daily closing prices", xlab="Day")
 # 3b
-trainingSet = sample(ibmclose, 
-                     size=round(0.20*length(ibmclose), 0), 
-                     replace=FALSE)
-testSet = 
-ibmclose
+trainingSet = sample(ibmclose, size=round(0.20*length(ibmclose), 0), replace=FALSE)
+uniqueTrainingSet = unique(trainingSet)
+testSet = as.vector(ibmclose)
+
+getRemainingElements <- function(){
+  for(i in length(testSet):1){
+    for(j in 1:length(uniqueTrainingSet)){
+      if(uniqueTrainingSet[j] == testSet[i]){
+        testSet = c(testSet[1:(i-1)], testSet[(i+1):length(testSet)])
+        j = length(uniqueTrainingSet)
+      }
+    }
+  }
+  return(testSet)
+}
+getRemainingElements()
+
+
+values = c(5,6,8,-1,4,7,4,4,3,3,5,6,1,2,-9,10,3,3,4,4,-4,-4,-3,-3,18,34,2,-30)
+record = values
+getRemainingElements2 <- function(){
+  for(i in length(values):1){
+    for(j in 1:length(valuesToRemove)){
+      if(valuesToRemove[j] == values[i]){
+        values = c(values[1:(i-1)], values[(i+1):length(values)])
+        j = length(valuesToRemove)
+      }
+    }
+  }
+  return(values)
+}
+
+getRemainingElements2()
+record
+
+
+#-----------
+record = testSet
+sum(!(record==ibmclose)) # check testSet is ibmclose at this point
+
+getRemainingElements3 <- function(){
+  for(i in length(testSet):1){
+    for(j in 1:length(uniqueTrainingSet)){
+      if(uniqueTrainingSet[j] == testSet[i]){
+        testSet = c(testSet[1:(i-1)], testSet[(i+1):length(testSet)])
+        j = length(uniqueTrainingSet)
+      }
+    }
+  }
+  return(testSet)
+}
+
+supposedToBeRemainderOfIBMNotInTrainingSet = getRemainingElements3()
+length(unique(supposedToBeRemainderOfIBMNotInTrainingSet))
+length(uniqueTrainingSet)
+length(unique(record))
