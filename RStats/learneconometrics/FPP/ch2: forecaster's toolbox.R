@@ -1,12 +1,15 @@
 #install.packages("fpp")
 #install.packages("GGally")
 #install.packages("reshape")
+#install.packages("caret")
+
 library(fpp)
 library(ggplot2)
 library(ggfortify)
 library(GGally)
 library(reshape)
 library(plyr)
+library(caret)
 
 
 getwd()
@@ -288,24 +291,6 @@ accuracy(djfit4, dowjones3)[2, c(2,3,5,6)]
 # 3a ---
 autoplot(ibmclose, main="IBM stock daily closing prices", xlab="Day")
 # 3b
-trainingSet = sample(ibmclose, size=round(0.20*length(ibmclose), 0), replace=FALSE)
-uniqueTrainingSet = unique(trainingSet)
-testSet = as.vector(ibmclose)
-
-getRemainingElements <- function(){
-  for(i in length(testSet):1){
-    for(j in 1:length(uniqueTrainingSet)){
-      if(uniqueTrainingSet[j] == testSet[i]){
-        testSet = c(testSet[1:(i-1)], testSet[(i+1):length(testSet)])
-        j = length(uniqueTrainingSet)
-      }
-    }
-  }
-  return(testSet)
-}
-getRemainingElements()
-
-
 values = c(5,6,8,-1,4,7,4,4,3,3,5,6,1,2,-9,10,3,3,4,4,-4,-4,-3,-3,18,34,2,-30)
 record = values
 getRemainingElements2 <- function(){
@@ -325,10 +310,13 @@ record
 
 
 #-----------
+trainingSet = sample(ibmclose, size=round(0.20*length(ibmclose), 0), replace=FALSE)
+uniqueTrainingSet = unique(trainingSet)
+testSet = as.vector(ibmclose)
 record = testSet
 sum(!(record==ibmclose)) # check testSet is ibmclose at this point
 
-getRemainingElements3 <- function(){
+getRemainingElements <- function(){
   for(i in length(testSet):1){
     for(j in 1:length(uniqueTrainingSet)){
       if(uniqueTrainingSet[j] == testSet[i]){
@@ -340,7 +328,7 @@ getRemainingElements3 <- function(){
   return(testSet)
 }
 
-supposedToBeRemainderOfIBMNotInTrainingSet = getRemainingElements3()
+supposedToBeRemainderOfIBMNotInTrainingSet = getRemainingElements()
 length(unique(supposedToBeRemainderOfIBMNotInTrainingSet))
 length(uniqueTrainingSet)
 length(unique(record))
@@ -348,3 +336,21 @@ length(unique(record))
 length(supposedToBeRemainderOfIBMNotInTrainingSet)
 length(trainingSet)
 length(record)
+
+# trying to split with caret package...
+set.seed(3456)
+trainIndex = createDataPartition(iris$Species, 
+                                 list=FALSE, 
+                                 times=1)
+trainIndex
+irisTrain = iris[trainIndex, ]
+irisTest = iris[-trainIndex,]
+irisTrain
+irisTest
+
+# how to create time slices for time series?
+
+# 4a
+autoplot(hsales, main="Sales of new one-family houses")
+# 4b
+# know how to split data into train/test...
