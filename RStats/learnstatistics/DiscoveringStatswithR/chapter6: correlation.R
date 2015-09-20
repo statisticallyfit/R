@@ -5,7 +5,7 @@ library(corrplot)
 library(boot)
 library(polycor)
 
-setwd("/datascience/projects/statisticallyfit/github/learningprogramming/R/RStats/learnstats/DiscoveringStatswithR")
+setwd("/datascience/projects/statisticallyfit/github/learningprogramming/R/RStats/learnstatistics/DiscoveringStatswithR")
 getwd()
 
 #install.packages("polycor")
@@ -73,6 +73,8 @@ cor.test(examData$Exam, examData$Anxiety, alt="less",
 
 # correlation matrix with cor()
 cor(examData[, 1:4])
+
+
 
 
 
@@ -229,3 +231,46 @@ pcor.test(pc, 1, 103) #nrow(examData2) = 103
 
 maleExam = subset(examData, Gender == "Male", select=c("Exam", "Anxiety"))
 femaleExam = subset(examData, Gender == "Female", select=c("Exam", "Anxiety"))
+rMale = cor(maleExam$Exam, maleExam$Anxiety); rMale
+rFemale = cor(femaleExam$Exam, femaleExam$Anxiety); rFemale
+
+# Compare the INDEPENDENT correlation coefficients
+# z_r = (1/2)* ln((1+r)/(1-r))
+# SE_zr = 1/(N-3)
+# statistic: zDiff = (zr1 - zr2)/sqrt(1/(N1-3) + 1/(N2-3))
+
+zrm = (1/2) * log((1 + rMale)/(1 - rMale))
+zrf = (1/2) * log((1 + rFemale)/(1 - rFemale))
+Nm = nrow(maleExam)
+Nf = nrow(femaleExam)
+zDiff = (zrm - zrf)/sqrt(1/(Nm - 3) + 1/(Nf - 3)); zDiff
+p.value = pnorm(zDiff); p.value
+# CONCLUDE: no significant difference in correlation between men and women
+
+
+# Comparing DEPENDENT correlation coefficients (comparing different r's
+# that come from same sample)
+# t-stat is used to test for sig diff between *two* dependent r's
+# FORMULA: tDiff = (rxy - rzy) * sqrt(((n-3)(1 + rxz))/(2(1 - rxy^2 - rxz^2 - rzy^2 + 2*rxy*rzx*rzy)))
+
+# Test if relation of anxiety (x) and exam (y) is stronger than
+# relation between revision (z) and exam (y)
+rXY = cor(examData2$Anxiety, examData2$Exam); rXY
+rZY = cor(examData2$Revise, examData2$Exam); rZY
+rXZ = cor(examData2$Anxiety, examData2$Revise); rXZ
+N = nrow(examData2); N
+tDiff = (rXY - rZY) * sqrt((N-3)*(1 + rXZ)/(2*(1 - rXY^2 - rXZ^2 - rZY^2 + 2*rXY*rXZ*rZY))); tDiff
+p.value = pt(tDiff, df=(N-3)); p.value
+# CONCLUDE: significant difference since p.value < 0.05
+
+
+
+
+# ---------- Leni Labcoat Real Research
+personalityData = read.delim("data/Chamorro-Premuzic.dat", header=TRUE)
+head(personalityData)
+
+personalityMatrix = as.matrix(personalityData[, c(3:dim(personalityData)[2])])
+rcorr(personalityMatrix) # does something other than textbook
+
+cor(personalityData$studentN, personalityData$lectureN, use="pairwise.complete.obs")
