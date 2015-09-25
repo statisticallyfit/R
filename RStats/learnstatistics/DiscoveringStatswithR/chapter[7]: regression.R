@@ -78,3 +78,66 @@ DFBeta.intercept = adj.pred.intercept - original.pred.intercept; DFBeta.intercep
 #     had been derived from the population
 # 2. Data splitting: split data randomly into halves and make new 
 #     regression models and compare their R^2 and b-values
+
+album2 = read.delim("data/Album Sales 2.dat", header=TRUE)
+head(album2)
+
+album2Model = lm(sales ~ adverts, data=album2)
+summary.lm(album2Model)
+album3Model = lm(sales ~ adverts + airplay + attract, data=album2)
+album3Model
+summary.lm(album3Model)
+# OR
+album3Model = update(album2Model, .~. + airplay + attract)
+# Cross-validity of this model is good since adj.Rsquared is 
+# close to Rsquared
+
+# lm.beta standardizes parameters, reducing them to stdev units
+# and making them easier to compare amongst each other
+lm.beta(album3Model) # looks like airplay is most important
+
+confint(album3Model) #interval for attract is wider (worse)
+album3Model
+
+
+# Comparing Fit of the Models (comparing R^2)
+# formula: F = (N - k - 1) R^2 / (k(1 - R^2)), 
+# where k = number of predictors, N = number of cases
+
+# First model: 
+album2Model
+N = dim(album1)[1]; N
+k1 = 1
+R.squared1 = summary(album2Model)$r.squared
+F1 = (N - k1 - 1) * R.squared1 / (k1*(1 - R.squared1)); F1
+
+# Second model: 
+album3Model
+N = dim(album2)[1]; N
+k2 = 3
+k.change = k2 - k1
+R.squared2 = summary(album3Model)$r.squared
+R.squared.change = R.squared2 - R.squared1
+Fchange = (N - k2 - 1) * R.squared.change / (k.change*(1 - R.squared2)); Fchange
+# degrees of freedom are: kchange = 2, N-k2-1 = 200-3-1 = 196
+p.value = 1 - pf(Fchange, df1=k.change, df2 = (N-k2-1)); p.value
+
+anova(album2Model, album3Model) # model1 must be subset of model2...
+
+# CONCLUDE: model3 is vastly improved compared to model2
+
+
+
+# Testing accuracy of the model
+# outliers: resid(), rstandard(), rstudent()
+# influentials: cooks.distance(), dfbeta(), hatvalues(), covratio()
+
+album2$resid = resid(album3Model)
+album2$stz.r = rstandard(album3Model)
+album2$stu.r = rstudent(album3Model)
+album2$cooks = cooks.distance(album3Model)
+album2$dfbeta = dfbeta(album3Model) # are the model diff without a yvalue
+album2$dffit = dffits(album3Model)
+album2$lev = hatvalues(album3Model)
+album2$covratio = covratio(album3Model)
+head(album2)
