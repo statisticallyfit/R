@@ -83,6 +83,7 @@ album2 = read.delim("data/Album Sales 2.dat", header=TRUE)
 head(album2)
 
 album2Model = lm(sales ~ adverts, data=album2)
+album2Model 
 summary.lm(album2Model)
 album3Model = lm(sales ~ adverts + airplay + attract, data=album2)
 album3Model
@@ -95,24 +96,25 @@ album3Model = update(album2Model, .~. + airplay + attract)
 # lm.beta standardizes parameters, reducing them to stdev units
 # and making them easier to compare amongst each other
 lm.beta(album3Model) # looks like airplay is most important
-
 confint(album3Model) #interval for attract is wider (worse)
-album3Model
 
 
 # Comparing Fit of the Models (comparing R^2)
 # formula: F = (N - k - 1) R^2 / (k(1 - R^2)), 
 # where k = number of predictors, N = number of cases
 
-# First model: 
+# First model: (the first model mades R^2 change from 0 to 0.335
+# and this change is F1 = 99.59)
 album2Model
 N = dim(album1)[1]; N
 k1 = 1
 R.squared1 = summary(album2Model)$r.squared
 F1 = (N - k1 - 1) * R.squared1 / (k1*(1 - R.squared1)); F1
 
-# Second model: 
-album3Model
+# Second model: (the addition of new predictors in the model 3
+# makes R^2 increase an additional 0.330 and the F ratio for this
+# relative change is = 96.44)
+summary.aov(album3Model)
 N = dim(album2)[1]; N
 k2 = 3
 k.change = k2 - k1
@@ -121,10 +123,9 @@ R.squared.change = R.squared2 - R.squared1
 Fchange = (N - k2 - 1) * R.squared.change / (k.change*(1 - R.squared2)); Fchange
 # degrees of freedom are: kchange = 2, N-k2-1 = 200-3-1 = 196
 p.value = 1 - pf(Fchange, df1=k.change, df2 = (N-k2-1)); p.value
-
+# The easy way: 
 anova(album2Model, album3Model) # model1 must be subset of model2...
-
-# CONCLUDE: model3 is vastly improved compared to model2
+# CONCLUDE: model3 is vastly improved compared to model2 
 
 
 
