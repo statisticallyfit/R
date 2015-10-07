@@ -142,3 +142,114 @@ album2$dffit = dffits(album3Model)
 album2$lev = hatvalues(album3Model)
 album2$covratio = covratio(album3Model)
 head(album2)
+
+write.table(album2, "data/Album Sales With Diagnostics.dat", 
+            sep="\t", row.names=FALSE)
+
+#------------------------------------------------------------
+# STANDARDIZED RESIDUALS
+
+# 95% of cases have stz.r within +/- 2 
+# so 5% are out of bound
+mean(abs(album2$stz.r) > 2)
+mean(abs(album2$stz.r) > 2.5)
+which(abs(album2$stz.r) > 3) # this case is an outlier
+
+# which values are out of bound?
+album2$large.stz.r <- abs(album2$stz.r) > 2
+album2[album2$large.stz.r, 
+       c("sales", "airplay", "attract", "adverts", "stz.r")]
+
+
+#--------------------------------------------------------
+# COOKS, LEV, COVRATIO
+album2[album2$large.stz.r, c("cooks", "lev", "covratio")]
+
+  # which cooks values are not < 1 ?
+large.cooks = album2$cooks > 1
+album2[large.cooks, c("cooks")] # none are > 1. Yay!
+
+
+  # leverages must be less than 0.02 or 0.04 or 0.06
+    # lev.bound = (k + 1)/n
+large.lev = album2$lev > 0.02
+out.bound.lev1 = album2[large.lev, c("lev")]
+# OR ask this way: 
+indexes.lev = which(album2$lev > 0.02)
+out.bound.lev2 = album2$lev[indexes.lev]
+identical(out.bound.lev1, out.bound.lev2)
+# how many (in percentage) are beyond 0.02? 
+100*length(out.bound.lev1)/(dim(album2)[1]) #or the lev2 one
+
+
+  # covratios must be within (0.94, 1.06)
+  # lower = 1 - (3(k+1)/n) = 1-3(4)/200 = 0.94
+  # upper = 1 + (3(k+1)/n) = 1.06
+indexes.cov = which(album2$covratio > 1.06 | album2$covratio < 0.94)
+out.bound.cov = album2$covratio[indexes.cov]
+out.bound.cov # these values are problematic
+100*length(out.bound.cov)/(dim(album2)[1]) 
+
+#------------------------------------------------------------
+
+# ASSESSING INDEPENDENT ERRORS (Durbin-Watson)
+
+# pvalue is bootstrapped so it is not the same every time...
+durbinWatsonTest(album3Model)
+dwt(album3Model)
+# CONCLUDE: closest to 2 is best, means errors are independent
+
+#------------------------------------------------------------
+
+# ASSESSING Multicollinearity (VIF)
+
+  # largest VIF must be < 10
+  # tolerance must not be below 0.1
+  # regression is biased is avg VIF is much greater than 1
+vif(album3Model) # vif
+1/vif(album3Model) # tolerance
+mean(vif(album3Model))
+# CONCLUDE: no multicollinearity
+
+#------------------------------------------------------------
+
+# Checking Residuals Assumptions
+
+# is fits vs stz residuals perfectly normal?
+album2$fitted = album3Model$fitted.values
+g = ggplot(data=album2, 
+           aes(x=album2$fitted, 
+               y=rstandard(album3Model))) + geom_point() +
+  labs(x="Fitted values", y="Studentized Residuals")
+# since these are fitted values, fitted line is a perfect mean
+g + geom_smooth(method="lm") 
+
+# are studentized residuals normal?
+hist = ggplot(album2, aes(stu.r)) + 
+  geom_histogram(aes(y=..density..), fill="white", col="grey")
+curve = stat_function(fun=dnorm, 
+                     args=list(
+                       mean=mean(album2$stz.r,na.rm=T),
+                       sd=sd(album2$stz.r,na.rm=T)),
+                colour="blue", size=1)
+hist + curve
+
+# qqplot of studentized residuals
+q = qplot(sample=album2$stu.r, stat='qq') + 
+  labs(x="Theoretical stu.r", y="Observed stu.r")
+q
+
+
+
+#------------------------------------------------------------
+
+# Bootstrapping Regression Coefficients
+
+bootReg <- function(formula, data, i){
+  d = data[i,c(1:4)]
+  fit = lm(formula, data=d)
+  return(coef(fit))
+}
+bootRegResults
+boot(data=album2, bootReg, R=2000)
+album2[1, 1:4]
