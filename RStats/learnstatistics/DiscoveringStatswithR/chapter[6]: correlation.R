@@ -81,16 +81,14 @@ cor(examData[, 1:4])
 # Pearson's R
 
 examData2 = examData[, c("Exam", "Anxiety", "Revise")]
-r = cor(examData2$Exam, examData2$Anxiety, method="pearson")
-r
+r = cor(examData2$Exam, examData2$Anxiety, method="pearson"); r
 # method 1 for cor matrix
 cor(examData2)
 # method 2 for cor matrix
 examMatrix = as.matrix(examData2) 
 rcorr(examMatrix, method="pearson") # does something other than textbook
 # method 3 for cor matrix
-r.mat = cor(examMatrix)
-r.mat
+r.mat = cor(examMatrix); r.mat
 # visualize the correlation matrix with correlogram: 
 corrplot(cor.mat, type="upper", order="hclust", tl.col="black", tl.srt=45)
 
@@ -126,10 +124,11 @@ cor.test(liarData$Position, liarData$Creativity, alt="less", method="kendall")
 
 
 
-# Bootstrapping Correlations
+# Bootstrapping Correlations to find R when assumptions aren't met
 
 # KENDALL method
-bootTau = function(liarData, i) cor(liarData$Position[i], liarData$Creativity[i], use="complete.obs", method="kendall")
+bootTau = function(liarData, i) 
+  cor(liarData$Position[i], liarData$Creativity[i], use="complete.obs", method="kendall")
 bootKendallInfo = boot(liarData, bootTau, 2000) # 2000 is sample size
 bootKendallInfo # bias in the tau is small, stderror is based on bootstrapped samples
 boot.ci(bootKendallInfo) # gives four different conf ints
