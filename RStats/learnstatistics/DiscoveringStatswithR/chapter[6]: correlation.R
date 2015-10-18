@@ -86,7 +86,7 @@ r = cor(examData2$Exam, examData2$Anxiety, method="pearson"); r
 cor(examData2)
 # method 2 for cor matrix
 examMatrix = as.matrix(examData2) 
-rcorr(examMatrix, method="pearson") # does something other than textbook
+rcorr(examMatrix)
 # method 3 for cor matrix
 r.mat = cor(examMatrix); r.mat
 # visualize the correlation matrix with correlogram: 
@@ -270,6 +270,8 @@ personalityData = read.delim("data/Chamorro-Premuzic.dat", header=TRUE)
 head(personalityData)
 
 personalityMatrix = as.matrix(personalityData[, c(3:dim(personalityData)[2])])
-rcorr(personalityMatrix) # does something other than textbook
+rc <- rcorr(personalityMatrix) 
+# which correlations are significant?
+rc$r[which(rc$P < 0.05)]
 
 cor(personalityData$studentN, personalityData$lectureN, use="pairwise.complete.obs")
