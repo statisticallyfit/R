@@ -31,7 +31,7 @@ makeLocations <- function(directory, fileNameList) {
 
 " Read data and make the data frame
 "
-complete <- function(directory, id=1:332) {
+complete_mine <- function(directory, id=1:332) {
       ## 'directory' is a character vector of length 1 indicating
       ## the location of the CSV files
       
@@ -59,9 +59,7 @@ complete <- function(directory, id=1:332) {
             
             # note the id and nobs in the list
             idList <- c(idList, data$ID[1])
-            nobsList <- c(nobsList, sum(!is.na(data$sulfate)))
+            nobsList <- c(nobsList, sum(!is.na(data$sulfate & !is.na(data$nitrate))))
       }
-      mat <- as.matrix(cbind(idList, nobsList))
-      colnames(mat) <- c("id", "nobs")
-      return(data.frame(mat))
+      return(data.frame(id=idList, nobs=nobsList))
 }
