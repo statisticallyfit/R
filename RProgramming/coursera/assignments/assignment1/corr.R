@@ -29,37 +29,32 @@ makeLocations <- function(directory, fileNameList) {
       return(fileLocList)
 }
 
-" Read data and make the data frame
+" Read data and make the correlations
 "
-complete <- function(directory, id=1:332) {
+corr <- function(directory, threshold=0) {
       ## 'directory' is a character vector of length 1 indicating
       ## the location of the CSV files
       
-      ## 'id' is an integer vector indicating the monitor ID numbers
-      ## to be used
+      ## 'threshold' is a numeric vector of length 1 indicating the
+      ## number of completely observed observations (on all
+      ## variables) required to compute the correlation between
+      ## nitrate and sulfate; the default is 0
       
-      ## Return a data frame of the form: (this is for SULFATE data)
-      ## id nobs
-      ## 1  117
-      ## 2  1041
-      ## ...
-      ## where 'id' is the monitor ID number and 'nobs' is the
-      ## number of complete cases
-      
-      fileNameList <- makeNames(id)
+      ## Return a numeric vector of correlations
+      ## NOTE: Do not round the result!
+      fileNameList <- makeNames(1:332)
       fileLocList <- makeLocations(directory, fileNameList)
       
       # Read data; each element in dataList is each csv file
       cur.dir <- "/datascience/projects/statisticallyfit/github/learningprogramming/R/RProgramming/coursera/assignments/assignment1"
-      idList <- vector()
-      nobsList <- vector()
+      corList <- numeric(0)
       for(loc in fileLocList){
             location <- paste(cur.dir, loc, sep="")
             data <- read.csv(location, header=TRUE)
             
-            # note the id in the list
-            idList <- c(idList, data$id[1])
-            nobsList <- c(nobsList, sum(!is.na(data$sulfate)))
+            if(sum(!is.na(data$sulfate)) > threshold & sum(!is.na(data$nitrate)) > threshold){
+                  corList <- c(corList, cor(data$sulfate, data$nitrate, use="pairwise.complete"))
+            }
       }
-      return(data.frame(idList, nobsList))
+      return(corList)
 }
