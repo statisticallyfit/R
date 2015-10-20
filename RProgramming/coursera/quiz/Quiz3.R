@@ -6,14 +6,9 @@ data(iris)
 head(iris)
 
 # 1
-str(tapply)
-?tapply
-
-tapply(iris$Sepal.Length, "virginica", mean)
 colMeans(subset(iris, Species=="virginica", Sepal.Length))
-
 mean(iris$Sepal.Length[which(iris$Species == "virginica")])
-tapply(iris)
+tapply(iris$Sepal.Length, iris$Species, mean)
 
 # 2
 apply(iris[, 1:4], 2, mean)
@@ -26,5 +21,5 @@ sapply(split(mtcars$mpg, mtcars$cyl), mean)
 tapply(mtcars$mpg, mtcars$cyl, mean)
 
 # 4
-avgs <- tapply(mtcars$mpg, mtcars$cyl, mean)
+avgs <- tapply(mtcars$hp, mtcars$cyl, mean); avgs
 abs(avgs[1] - avgs[3])
