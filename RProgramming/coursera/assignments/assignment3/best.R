@@ -9,7 +9,40 @@ outcome$Hospital.30.Day.Death..Mortality..Rates.from.Heart.Failure
 
 best <- function(state, outcome) {
       ## Read outcome data
+      outcomeData <- read.csv("data/outcome-of-care-measures.csv", colClasses = "character")
+      outcomeData[,11] <- as.numeric(outcomeData[,11])
       
+      # Match outcome string to actual columns
+      rates <- c()
+      if(outcome == "heart attack")
+            rates <- subset(outcomeData, State==state, Hospital.30.Day.Death..Mortality..Rates.from.Heart.Attack)[,]
+      else if(outcome == "heart failure")
+            rates <- subset(outcomeData, State==state, Hospital.30.Day.Death..Mortality..Rates.from.Heart.Failure)[,]
+      else if(outcome == "pneumonia")
+            rates <- subset(outcomeData, State==state, Hospital.30.Day.Death..Mortality..Rates.from.Pneumonia)[,]
+      # Find names of hospitals for the specified state
+      names <- outcomeData$Hospital.Name[which(outcomeData$State==state)]
+      # Create the data frame that has hospitals alongside their rates
+      info <- data.frame(hospital=names, rate=rates)
+      
+      # Find minimum rate for the hospitals
+      bestRate <- min(info$rate, na.rm=TRUE)
+      bestRateHospital <- ""
+      
+      # Get names of hospitals with min rates, assuming the rates are
+      # repeated
+      indexes <- which(info$rate == bestRate)
+      hospitalsWithBestRates <- info$hospital[indexes]
+      # If so, get names of hospitals with same rates. 
+      if(length(hospitalsWithBestRates) > 1){
+            sortedHospitals <- sort(hospitalsWithBestRates)
+            bestRateHospital <- as.character(sortedHospitals[1])
+      } else {
+            # if there are no hospitals with same rates, there is only one
+            # that one must be the hospital with the best rate
+            bestRateHospital <- as.character(hospitalsWithBestRates)
+      }
+      return(bestRateHospital)
 }
 
 
@@ -21,21 +54,22 @@ scrapBest <- function(info) {
       
       # Find minimum rate for the hospitals
       bestRate <- min(info$rate, na.rm=TRUE)
+      bestRateHospital <- ""
       
-      hospitalWithBestRate <- ""
-      
-      # Find if the minimum is repeated in the list
-      dupIndex <- anyDuplicated(info$rate)
+      # Get names of hospitals with min rates, assuming the rates are
+      # repeated
+      indexes <- which(info$rate == bestRate)
+      hospitalsWithBestRates <- info$hospital[indexes]
       # If so, get names of hospitals with same rates. 
-      if(dupIndex != 0){
-            if(bestRate == )
-            hospitalsWithSameRates <- info$hospital[duplicated(info$rate)]
-            # Sort alphabetically out of these hospitals and keep first
-            hospitalWithBestRate <- (as.character(sort(hospitalsWithSameRates)[1]))
+      if(length(hospitalsWithBestRates) > 1){
+            sortedHospitals <- sort(hospitalsWithBestRates)
+            bestRateHospital <- sortedHospitals[1]
       } else {
-            hospitalWithBestRate <- info$hospital[which(info$rate == bestRate)]
+            # if there are no hospitals with same rates, there is only one
+            # that one must be the hospital with the best rate
+            bestRateHospital <- hospitalsWithBestRates
       }
-      return(hospitalWithBestRate)
+      return(bestRateHospital)
 }
 
 
@@ -52,8 +86,7 @@ names <- c("Mary's", "John's", "Gleeson", "Samantha Hospital", "Newton",
 rates1 <- c(13.4, 50.1, 50.3, 19, 13.5, 13.4, 20, 70, 13.4, 15, 15)
 d1 <- data.frame(hospital=names, rate=rates1); d1
 d1$hospital[which(d1$rate==13.4)]
-bool <- scrapBest(d1) == "Henry"
-assert(bool, "Failed test 1")
+assert(scrapBest(d1) == "Henry", "Failed test 1")
 
 # Test case: minimum is duplicated but comes AFTER other duplicates
 rates2 <- c(13.4, 50.1, 50.3, 19, 15, 15, 20, 70, 13.4, 15, 15)
