@@ -1,16 +1,10 @@
 library(ggplot2)
+
 setwd("/datascience/projects/statisticallyfit/github/learningprogramming/R/RProgramming/coursera/assignments/assignment3")
-
-source("plot30daymortalityrates.R")
-
-outcome$Hospital.30.Day.Death..Mortality..Rates.from.Heart.Attack
-outcome$Hospital.30.Day.Death..Mortality..Rates.from.Pneumonia
-outcome$Hospital.30.Day.Death..Mortality..Rates.from.Heart.Failure
 
 best <- function(state, outcome) {
       ## Read outcome data
-      outcomeData <- read.csv("data/outcome-of-care-measures.csv", colClasses = "character")
-      outcomeData[,11] <- as.numeric(outcomeData[,11])
+      source("loaddata.R")
       
       # Match outcome string to actual columns
       rates <- c()
@@ -87,6 +81,7 @@ rates1 <- c(13.4, 50.1, 50.3, 19, 13.5, 13.4, 20, 70, 13.4, 15, 15)
 d1 <- data.frame(hospital=names, rate=rates1); d1
 d1$hospital[which(d1$rate==13.4)]
 assert(scrapBest(d1) == "Henry", "Failed test 1")
+assert(f(d1) == 13.4, "Failed test 0")
 
 # Test case: minimum is duplicated but comes AFTER other duplicates
 rates2 <- c(13.4, 50.1, 50.3, 19, 15, 15, 20, 70, 13.4, 15, 15)
