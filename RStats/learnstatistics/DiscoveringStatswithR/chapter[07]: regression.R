@@ -32,7 +32,7 @@ ggplot(data=pubsData, aes(x=pubs, y=mortality)) +
 
 # ------ Example 3 ------
 dfbetaData = read.table("data/dfbeta.dat", header=TRUE)
-dfbetaData
+head(dfbetaData)
 
 # data with influential point
 dfbetaModel = lm(Y ~ X, data=dfbetaData)
@@ -106,6 +106,8 @@ confint(album3Model) #interval for attract is wider (worse)
 # First model: (the first model mades R^2 change from 0 to 0.335
 # and this change is F1 = 99.59)
 album2Model
+summary.lm(album2Model)
+summary.aov(album2Model)
 N = dim(album1)[1]; N
 k1 = 1
 R.squared1 = summary(album2Model)$r.squared
@@ -114,12 +116,13 @@ F1 = (N - k1 - 1) * R.squared1 / (k1*(1 - R.squared1)); F1
 # Second model: (the addition of new predictors in the model 3
 # makes R^2 increase an additional 0.330 and the F ratio for this
 # relative change is = 96.44)
+summary.lm(album3Model)
 summary.aov(album3Model)
 N = dim(album2)[1]; N
 k2 = 3
 k.change = k2 - k1
 R.squared2 = summary(album3Model)$r.squared
-R.squared.change = R.squared2 - R.squared1
+R.squared.change = R.squared2 - R.squared1; R.squared.change
 Fchange = (N - k2 - 1) * R.squared.change / (k.change*(1 - R.squared2)); Fchange
 # degrees of freedom are: kchange = 2, N-k2-1 = 200-3-1 = 196
 p.value = 1 - pf(Fchange, df1=k.change, df2 = (N-k2-1)); p.value
@@ -157,6 +160,7 @@ which(abs(album2$stz.r) > 3) # this case is an outlier
 
 # which values are out of bound?
 album2$large.stz.r <- abs(album2$stz.r) > 2
+head(album2)
 album2[album2$large.stz.r, 
        c("sales", "airplay", "attract", "adverts", "stz.r")]
 
@@ -166,7 +170,7 @@ album2[album2$large.stz.r,
 album2[album2$large.stz.r, c("cooks", "lev", "covratio")]
 
   # which cooks values are not < 1 ?
-large.cooks = album2$cooks > 1
+large.cooks = album2$cooks > 1; mean(large.cooks)
 album2[large.cooks, c("cooks")] # none are > 1. Yay!
 
 
@@ -236,8 +240,7 @@ hist + curve
 
 # qqplot of studentized residuals
 q = qplot(sample=album2$stu.r, stat='qq') + 
-  labs(x="Theoretical stu.r", y="Observed stu.r")
-q
+  labs(x="Theoretical stu.r", y="Observed stu.r"); q
 
 
 
@@ -245,11 +248,44 @@ q
 
 # Bootstrapping Regression Coefficients
 
-bootReg <- function(formula, data, i){
-  d = data[i,c(1:4)]
+bootReg <- function(formula, data, indices){
+  d = data[indices, c(1:4)]
   fit = lm(formula, data=d)
   return(coef(fit))
 }
-bootRegResults
-boot(data=album2, bootReg, R=2000)
-album2[1, 1:4]
+bootRegResults <- boot(data=album2, statistic=bootReg, 
+                       formula=sales~adverts+airplay+attract,
+                       R=2000)
+res <- bootRegResults$t
+head(res)
+head(res[,1])
+res <- data.frame(advertsCoeff=res[,1], salesCoeff=res[,2], 
+           airplayCoeff=res[,3], attractCoeff=res[,4])
+head(res)
+colMeans(as.matrix(res))
+
+# Conf ints for the sales (intercept)
+boot.ci(bootRegResults, type="bca", index=2)
+# Conf ints for adverts
+boot.ci(bootRegResults, type="bca", index=1)
+# Conf ints for airplay
+boot.ci(bootRegResults, type="bca", index=3)
+# Conf ints for attract
+boot.ci(bootRegResults, type="bca", index=4)
+
+# --> Conf ints are close to plug-in approach (output 7.4)
+# suggesting that model is near normal
+
+
+
+# -----------------------------------------------------------------
+# Dummy Variable Coding
+gfr <- read.delim("data/GlastonburyFestivalRegression.dat", header=T)
+# hygiene score 0 - 4 (stinky - clean)
+# music - type of music people affiliate themselves with
+head(gfr) 
+# there are 4 music groups - need 3 dummy variables
+# baseline - no musical affiliation - 0
+# crusty, indie, metaller - 1 in the right places
+contrasts(gfr$music) <- contr.treatment(4, base=4)
+gfr$music

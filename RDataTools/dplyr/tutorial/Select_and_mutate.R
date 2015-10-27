@@ -32,15 +32,20 @@ hflights_subset <- select(hflights, ActualElapsedTime, AirTime, ArrDelay, DepDel
 kable(head(hflights_subset), align='c')
 
 hflights_subset2 <- select(hflights, Year:DayOfWeek, ArrDelay:Diverted)
-
+head(hflights_subset2)
 
 # Helper functions for select()
-# starts_with(), ends_with(), contains(), matches(), num_range(), one_of()
+      # starts_with()
+      # ends_with()
+      # contains()
+      # matches()
+      # num_range()
+      # one_of()
 select(hflights, matches("ArrDelay"), matches("DepDelay"))
 select(hflights, one_of(c("UniqueCarrier", "FlightNum", "TailNum", 
                           "Cancelled", "CancellationCode")))
 select(hflights, ends_with("Time"), ends_with("Delay"))
-
+head(cbind(hflights$ArrDelay, hflights$DepDelay))
 
 
 # MUTATE ADDS COLUMNS ------------------------------------------------------

@@ -125,30 +125,34 @@ cor.test(liarData$Position, liarData$Creativity, alt="less", method="kendall")
 
 
 # Bootstrapping Correlations to find R when assumptions aren't met
+# For how bootstrapping works, see: 
+# www.mayin.org/ajayshah/KB/R/documents/boot.html
 
 # KENDALL method
-bootTau = function(liarData, i) 
-  cor(liarData$Position[i], liarData$Creativity[i], use="complete.obs", method="kendall")
+bootTau = function(liarData, indices) 
+      cor(liarData$Position[indices], liarData$Creativity[indices], use="complete.obs", method="kendall")
 bootKendallInfo = boot(liarData, bootTau, 2000) # 2000 is sample size
 bootKendallInfo # bias in the tau is small, stderror is based on bootstrapped samples
+head(bootKendallInfo$t) # all the correlation estimates
 boot.ci(bootKendallInfo) # gives four different conf ints
 
 
 # PEARSON method
 
-bootR = function(examData2, i) cor(examData2$Exam[i], examData2$Anxiety[i], use="complete.obs", method="pearson")
+bootR = function(examData2, indices) 
+      cor(examData2$Exam[indices], examData2$Anxiety[indices], use="complete.obs", method="pearson")
 bootPearsonInfo = boot(examData2, bootR, 2000)
-bootPearsonInfo
+head(bootPearsonInfo$t) # the correlation estimates - all 2000
 boot.ci(bootPearsonInfo) 
 
 bootR = function(examData2, i) cor(examData2$Revise[i], examData2$Anxiety[i], use="complete.obs", method="pearson")
 bootPearsonInfo = boot(examData2, bootR, 2000)
-bootPearsonInfo
+head(bootPearsonInfo$t)
 boot.ci(bootPearsonInfo) 
 
 bootR = function(examData2, i) cor(examData2$Exam[i], examData2$Revise[i], use="complete.obs", method="pearson")
 bootPearsonInfo = boot(examData2, bootR, 2000)
-bootPearsonInfo
+head(bootPearsonInfo$t)
 boot.ci(bootPearsonInfo) 
 
 
@@ -156,7 +160,7 @@ boot.ci(bootPearsonInfo)
 
 bootRho = function(examData2, i) cor(examData2$Exam[i], examData2$Anxiety[i], use="complete.obs", method="spearman")
 bootSpearmanInfo = boot(examData2, bootRho, 2000)
-bootSpearmanInfo
+head(bootSpearmanInfo$t)
 boot.ci(bootSpearmanInfo)
 
 bootRho = function(examData2, i) cor(examData2$Revise[i], examData2$Anxiety[i], use="complete.obs", method="spearman")
@@ -171,7 +175,7 @@ boot.ci(bootSpearmanInfo)
 
 
 
-# Point biserial correlation
+# Point biserial correlation: two separate categories
 
 catData = read.csv("data/pbcorr.csv", header=TRUE); head(catData)
 r.pb = cor(catData$time, catData$gender, method="pearson"); r.pb
@@ -179,17 +183,18 @@ cor(catData$time, catData$recode) # sign has no meaning
 cor.test(catData$time, catData$gender, method="pearson")
 r.pb^2 # gender accounts for this % of time spent away from home
 
-# Biserial correlation (cats were neutered so there are more than 2 categories)
+# Biserial correlation (cats were neutered so there 
+# are more than 2 categories)
 # CONVERT: r.b = r.pb * sqrt(pq)/y
-# y = ordinate of normal distribution at the point where there is p% of
-# the area on one side and q% on the other side
+# y = ordinate of normal distribution at the point where there
+# is p% of the area on one side and q% on the other side
 
 # LONG WAY calculation
-catFreq = table(catData$gender)
+catFreq = table(catData$gender); catFreq
 props = prop.table(catFreq); p = props[1]; q = props[2]; props
-z.props = qnorm(props[1]); z.props
+z.props = qnorm(p); z.props
 y = dnorm(z.props); y # y is ordinate value determined by proprtions
-r.b = r.pb * sqrt(p*q)/y; r.b
+r.b = as.numeric(r.pb * sqrt(p*q)/y); r.b
 # SHORT WAY calculation
 polyserial(catData$time, catData$gender)
 r.b
@@ -198,7 +203,7 @@ r.b
 # SE.r.b = sqrt(p*q)/(y*sqrt(n))
 # z.r.b = (rb - rb.bar)/SE.r.b
 n = nrow(catData); n
-SE.rb = sqrt(p*q)/(y*sqrt(n)); SE.rb
+SE.rb = as.numeric(sqrt(p*q)/(y*sqrt(n))); SE.rb
 z.rb = r.b/SE.rb; z.rb
 p.value = 2*(1 - pnorm(z.rb)); p.value
 
@@ -261,17 +266,3 @@ N = nrow(examData2); N
 tDiff = (rXY - rZY) * sqrt((N-3)*(1 + rXZ)/(2*(1 - rXY^2 - rXZ^2 - rZY^2 + 2*rXY*rXZ*rZY))); tDiff
 p.value = pt(tDiff, df=(N-3)); p.value
 # CONCLUDE: significant difference since p.value < 0.05
-
-
-
-
-# ---------- Leni Labcoat Real Research
-personalityData = read.delim("data/Chamorro-Premuzic.dat", header=TRUE)
-head(personalityData)
-
-personalityMatrix = as.matrix(personalityData[, c(3:dim(personalityData)[2])])
-rc <- rcorr(personalityMatrix) 
-# which correlations are significant?
-rc$r[which(rc$P < 0.05)]
-
-cor(personalityData$studentN, personalityData$lectureN, use="pairwise.complete.obs")
