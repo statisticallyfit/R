@@ -9,8 +9,10 @@
 # 1) system.time() - computes time in seconds needed to evaluate expression
 # returns: usertime (charghed by CPU) AND elapsed time (actual time)
 # elapsed time > usertime if CPU waits around
-# elapsed time < usertime if lots of cores
+# elapsed time < usertime if lots of cores so less waiting around
 
+# user time = time needed to do calculations
+# elapsed time = sum of user time + system.time function + waiting around
 
 ## Elapsed time > user time
 system.time(readLines("http://www.jhsph.edu"))
