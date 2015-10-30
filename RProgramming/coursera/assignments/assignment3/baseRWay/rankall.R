@@ -1,4 +1,5 @@
-" This function uses the rankhospital() function to rank all the
+" 
+This function uses the rankhospital() function to rank all the
 hospitals in all states.
 "
 rankall <- function(outcome, num="best"){

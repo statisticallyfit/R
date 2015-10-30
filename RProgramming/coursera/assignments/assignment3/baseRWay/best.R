@@ -1,6 +1,7 @@
-" Given the state and outcome names, best() finds which hospital has the minimum
-mortality (or best) rate. If multiple hospitals have the same minimum rate, 
-the best() function returns the hospital that comes alphabetically first. 
+" Given the state and outcome names, best() finds which hospital has the 
+minimum mortality (or best) rate. If multiple hospitals have the 
+same minimum rate, the best() function returns the hospital that 
+comes alphabetically first. 
 "
 best <- function(state, outcome) {
       ## Read and organize outcome data
