@@ -287,5 +287,18 @@ head(gfr)
 # there are 4 music groups - need 3 dummy variables
 # baseline - no musical affiliation - 0
 # crusty, indie, metaller - 1 in the right places
+
+# SET CONTRASTS AUTOMATICALLY
 contrasts(gfr$music) <- contr.treatment(4, base=4)
-gfr$music
+head(gfr$music)
+# SET MANUALLY
+crusty <- c(1,0, 0, 0)
+indie <- c(0, 1, 0 , 0)
+metal <- c(0, 0, 1, 0)
+contrasts(gfr$music) <- cbind(crusty, indie, metal)
+head(gfr$music)
+
+# Model with dummy variables
+glastonburyModel <- lm(data=gfr, change ~ music)
+summary.lm(glastonburyModel)
+summary.aov(glastonburyModel)

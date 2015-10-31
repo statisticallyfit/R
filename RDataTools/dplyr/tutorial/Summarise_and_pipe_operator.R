@@ -1,3 +1,6 @@
+library(dplyr)
+library(hflights)
+
 # SUMMARISE SUBSETS AND DOES STATISTICS ON IT
 # summarise(data, sumvar=sum(A), argvar=avg(B))
 
@@ -109,10 +112,79 @@ hflights %>%
 # COMBINE GROUP_BY AND MUTATE ---------------------------------------------
 
 # Part 1
+# Line 4 finds mean of T/F vector ==> probability, not actual mean
 hflights %>%
   group_by(UniqueCarrier) %>%
   filter(!is.na(ArrDelay)) %>%
-  summarise(p_delay = mean(ArrDelay > 0)) %>%
-  mutate(rank = rank(p_delay)) %>%
+  summarise(prob_delay = mean(ArrDelay > 0)) %>%
+  mutate(rank = rank(prob_delay)) %>%
   arrange(rank)
 
+# Part 2
+hflights %>%
+      group_by(UniqueCarrier) %>%
+      filter(!is.na(ArrDelay), ArrDelay > 0) %>%
+      summarise(avg = mean(ArrDelay)) %>%
+      mutate(rank = rank(avg)) %>%
+      arrange(rank)
+
+
+# ---------------------------------------------------------------------
+# Group_by exercises
+
+# Which plane (by tail number) flew out of Houston the most times? 
+# How many times?
+adv1 <- hflights %>%
+      group_by(TailNum) %>%
+      summarise(n = n()) %>%
+      filter(n == max(n))
+adv1
+
+# How many airplanes only flew to one destination from Houston?
+adv2 <- hflights %>%
+      group_by(TailNum) %>%
+      summarise(ndest = n_distinct(Dest)) %>%
+      filter(ndest == 1) %>%
+      summarise(nplanes = n())
+adv2
+
+# Find the most visited destination for each carrier
+adv3 <- hflights %>%
+      group_by(UniqueCarrier, Dest) %>%
+      summarise(n = n()) %>%
+      mutate(rank = rank(desc(n))) %>%
+      filter(rank == 1)
+adv3
+
+# Find the carrier that travels to each destination the most
+adv4 <- hflights %>%
+      group_by(Dest, UniqueCarrier) %>%
+      summarise(n = n()) %>%
+      mutate(rank = rank(desc(n))) %>%
+      filter(rank == 1)
+adv4
+
+
+
+# ---------------------------------------------------------------------
+# Dplyr can deal with different data types
+
+#install.packages("data.table")
+library(data.table)
+
+hflights2 <- as.data.table(hflights)
+s2 <- hflights2 %>%
+      summarise(n_carrier = n_distinct(UniqueCarrier))
+s2
+
+
+# ---------------------------------------------------------------------
+# Dplyr and mySQL databases (dplyr converts queries, converts 
+# needed data only, so no memory problems in R)
+
+#install.packages("nycflights13")
+library(nycflights13)
+
+summarise(flights, 
+          n_carriers = n_distinct(carrier), 
+          n_flights = n())
