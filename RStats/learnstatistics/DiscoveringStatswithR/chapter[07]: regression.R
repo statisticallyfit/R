@@ -279,6 +279,10 @@ boot.ci(bootRegResults, type="bca", index=4)
 
 
 # -----------------------------------------------------------------
+
+## UNDERSTANDING REGRESSION WITH FACTORS (using contrasts)
+# question: how does this relate to regression with number vars?
+
 # Dummy Variable Coding
 gfr <- read.delim("data/GlastonburyFestivalRegression.dat", header=T)
 # hygiene score 0 - 4 (stinky - clean)
@@ -292,13 +296,28 @@ head(gfr)
 contrasts(gfr$music) <- contr.treatment(4, base=4)
 head(gfr$music)
 # SET MANUALLY
-crusty <- c(1,0, 0, 0)
-indie <- c(0, 1, 0 , 0)
-metal <- c(0, 0, 1, 0)
-contrasts(gfr$music) <- cbind(crusty, indie, metal)
+crustyCode <- c(1,0, 0, 0)
+indieCode <- c(0, 1, 0 , 0)
+metalCode <- c(0, 0, 1, 0)
+contrasts(gfr$music) <- cbind(crustyCode, indieCode, metalCode)
 head(gfr$music)
 
 # Model with dummy variables
 glastonburyModel <- lm(data=gfr, change ~ music)
 summary.lm(glastonburyModel)
 summary.aov(glastonburyModel)
+
+
+# MEANING OF CONTRASTS
+
+# Slopes = rel.diff between each group and baseline group
+# Slopes (the change) is converted to t-statistic ==> significance
+
+# Find mean of change variable for each music group
+ # (splitting the change variable by music group)
+round(tapply(gfr$change, gfr$music, mean, na.rm=TRUE), 3)
+glastonburyModel
+(-0.966 - (-0.554)) # crustyMean - noAffMean = crustySlope
+(-0.964 - - 0.544) # indieMean - noAffMean = indieSlope
+(-0.526 - - 0.554) # metallerMean - noAffMean = metallerSlope
+# intercept = noAffMean
