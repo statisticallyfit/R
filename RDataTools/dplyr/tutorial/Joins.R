@@ -7,6 +7,7 @@ library(nycflights13)
 flightsOriginal <- flights
 flights <- flights %>%
       select(year:day, hour, origin, dest, tailnum, carrier)
+
 flights %>%
       left_join(airlines)
 
