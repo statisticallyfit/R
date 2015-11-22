@@ -14,4 +14,18 @@
       X^2 = -2LL(baseline) - (-2LL(new))
           = 2LL(new) - 2LL(baseline)
       df = k_new - k_baseline
+* R-statistic: 
+      = is the partial correlation between outcome variable
+      and the predictor variables. 
+      = sqrt((z^2 - 2df) / (-2LL(baseline)))
+      = between -1 and 1
+      = positive: increase in predictor variable amount is
+      associated with increase in likelihood of event. 
+      = negative: increase in predictor means decrease in 
+      likelihood.
+* R^2 equivalent: 
+      = (2LL(new) - 2LL(baseline)) / (-2LL(baseline))
+      = between 0 and 1
+      = measure of how much the bad fit improves by including
+      predictor variables. 
 "
