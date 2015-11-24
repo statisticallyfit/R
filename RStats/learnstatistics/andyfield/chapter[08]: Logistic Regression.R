@@ -6,8 +6,9 @@
       * multinomial log.reg: more than two categorical outcomes. 
 * Logistic reg. equation: 
       P(Y) = 1 / (1 + e^ (-(b0 + b1x1)))
-* log-likelihood (equivalent of R^2):
-      sum(1->N) [Yi * ln(P(Yi)) + (1 - Yi) * ln(1 - P(Yi))]
+* log-likelihood (equivalent of residual sum of squares):
+      = sum(1->N) [Yi * ln(P(Yi)) + (1 - Yi) * ln(1 - P(Yi))]
+      = unexplained variation left after model fitting
 * deviance = -2LL
        = -2 * loglikelihood
 * improvement of model statistic: X^2 (chi-squared)
