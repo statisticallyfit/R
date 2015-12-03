@@ -1,5 +1,5 @@
-#install.packages("asbio")
-
+install.packages("asbio")
+install.packages("tkrplot")
 library(asbio)
 
 
