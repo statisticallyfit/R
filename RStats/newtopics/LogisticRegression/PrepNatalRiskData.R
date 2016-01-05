@@ -14,6 +14,7 @@ makevarNum = function(col, sentinel) {
       ifelse(col==sentinel, NA, col)
 }
 
+
 # make a boolean from 1/2/9 data.
 makevar12 = function(col) {
       ifelse(col==9, NA, ifelse(col==1, T, F))
