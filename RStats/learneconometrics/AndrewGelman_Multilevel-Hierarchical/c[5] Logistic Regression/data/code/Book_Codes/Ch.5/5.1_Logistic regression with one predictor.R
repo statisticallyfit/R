@@ -4,7 +4,11 @@
 # The R codes & data files should be saved in the same directory for
 # the source command to work
 
+#library("arm")
+#install.packages("arm")
+#setwd("/datascience/projects/statisticallyfit/github/learningprogramming/R/RStats/learneconometrics/AndrewGelman_Multilevel-Hierarchical/c[5] Logistic Regression/data/code/Book_Codes/Ch.4")
 source("4.7_Fitting a series of regressions.R") # where data was cleaned; set the directory to be where this file is
+
 
 yr <- 1992
   ok <- nes.year==yr & presvote<3
