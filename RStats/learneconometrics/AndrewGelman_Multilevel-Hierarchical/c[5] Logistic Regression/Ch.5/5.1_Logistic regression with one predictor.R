@@ -6,7 +6,9 @@
 
 #library("arm")
 #install.packages("arm")
-#setwd("/datascience/projects/statisticallyfit/github/learningprogramming/R/RStats/learneconometrics/AndrewGelman_Multilevel-Hierarchical/c[5] Logistic Regression/data/code/Book_Codes/Ch.4")
+
+setwd("/datascience/projects/statisticallyfit/github/learningprogramming/R/RStats/learneconometrics/AndrewGelman_Multilevel-Hierarchical/c[5] Logistic Regression/Ch.4")
+
 source("4.7_Fitting a series of regressions.R") # where data was cleaned; set the directory to be where this file is
 
 
