@@ -48,3 +48,7 @@ rmse(log(dtest$PINCP, base=10), predict(model, newdata=dtest))
 
 # Coefficients
 coefficients(model)
+
+
+# Summary
+summary.lm(model)
