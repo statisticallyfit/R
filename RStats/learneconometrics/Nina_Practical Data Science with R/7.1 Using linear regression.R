@@ -52,3 +52,5 @@ coefficients(model)
 
 # Summary
 summary.lm(model)
+# F-ratio = ratio of variance of residuals from linear model to 
+# variance of residuals from constant model. 
