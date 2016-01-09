@@ -76,3 +76,20 @@ p2 <- ggplot(rocFrame, aes(x=threshold)) +
       coord_cartesian(xlim=c(0, 0.05))
 
 nplot(list(p1, p2))
+
+
+
+# Have picked threshold, now evaluate model with confusion matrix
+ctab.test <- table(pred=test$pred > 0.02, atRisk=test$atRisk)
+ctab.test
+precision <- ctab.test[2,2] / sum(ctab.test[2, ])
+precision
+recall <- ctab.test[2,2] / sum(ctab.test[ ,2])
+recall
+enrichmentRate <- precision / mean(as.numeric(test$atRisk))
+enrichmentRate
+
+
+
+# Advice from logistic model
+coefficients(model)
