@@ -114,5 +114,11 @@ survey <- read.table("data/survey.txt", header=TRUE)
 head(survey)
 
 bn.mle <- bn.fit(dag, data = survey, method = "mle")
+
+# checking results..
 bn.mle$R
 bn$R
+
+bn.mle$O
+# can also be computed manually:
+prop.table(table(survey[, c("O", "E")]), margin = 2)
