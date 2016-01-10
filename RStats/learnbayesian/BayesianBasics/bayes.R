@@ -35,3 +35,10 @@ pDataGivenTheta
 pData <- sum(pDataGivenTheta * pTheta); pData
 pThetaGivenData <- pDataGivenTheta * pTheta / pData
 pThetaGivenData; hist(pThetaGivenData)
+
+
+round(data.frame(theta, prior=pTheta, likelihood=pDataGivenTheta, 
+                 posterior=pThetaGivenData), 3)
+
+posteriorMean <- sum(pThetaGivenData * theta)
+posteriorMean
