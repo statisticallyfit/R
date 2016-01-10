@@ -122,3 +122,7 @@ bn$R
 bn.mle$O
 # can also be computed manually:
 prop.table(table(survey[, c("O", "E")]), margin = 2)
+
+# Estimating same conditional probabilities using bayes posteriors
+bn.bayes <- bn.fit(dag, data=survey, method="bayes", iss=10)
+bn.bayes
