@@ -1,13 +1,16 @@
 # Data sets from: 
 # www.bnlearn.com/book~crc/
+# or click on the "onlin" link under Features, last bullet
+# https://www.crcpress.com/Bayesian-Networks-With-Examples-in-R/Scutari-Denis/9781482225587
 
 
 library(bnlearn)
 #install.packages("bnlearn")
+setwd("/datascience/projects/statisticallyfit/github/learningprogramming/R/RStats/learnbayesian/MarcoScutari_Bayesian Networks with Examples in R")
 
 
 # directed acyclic graph (dag)
-dag <- empty.graph(nodes = c("A", "S", "E", "O", "R", "Tr"))
+dag <- empty.graph(nodes = c("A", "S", "E", "O", "R", "T"))
 dag
 
 # Age influences education - younger people have university degree
@@ -21,8 +24,8 @@ dag <- set.arc(dag, from="E", to="O")
 dag <- set.arc(dag, from="E", to="R")
 dag
 # Occupation and Residence both influence transport method
-dag <- set.arc(dag, from="O", to="Tr")
-dag <- set.arc(dag, from="R", to="Tr")
+dag <- set.arc(dag, from="O", to="T")
+dag <- set.arc(dag, from="R", to="T")
 dag
 
 modelstring(dag)
@@ -30,20 +33,20 @@ nodes(dag)
 arcs(dag)
 
 # Less-cumbersome method to set arcs to nodes
-dag2 <- empty.graph(nodes = c("A", "S", "E", "O", "R", "Tr"))
+dag2 <- empty.graph(nodes = c("A", "S", "E", "O", "R", "T"))
 arc.set <- matrix(c("A", "E", 
                     "S", "E", 
                     "E", "O", 
                     "E", "R", 
-                    "O", "Tr", 
-                    "R", "Tr"), 
+                    "O", "T", 
+                    "R", "T"), 
                   byrow=TRUE, ncol=2, 
                   dimnames = list(NULL, c("from", "to")))
 arcs(dag2) <- arc.set
 all.equal(dag, dag2)
 
 # Confirm acyclic (not circular)
-try(set.arc(dag, from="Tr", to="E"))
+try(set.arc(dag, from="T", to="E"))
 
 
 
@@ -53,7 +56,7 @@ S.lv <- c("M", "F")
 E.lv <- c("high", "uni")
 O.lv <- c("emp", "self")
 R.lv <- c("small", "big")
-Tr.lv <- c("car", "train", "other")
+T.lv <- c("car", "train", "other")
 
 ## Making the local distributions
 
@@ -81,10 +84,10 @@ E.prob <- array(c(0.75, 0.25, 0.72, 0.28, 0.88, 0.12, 0.64,
                   0.36, 0.70, 0.30, 0.90, 0.10), dim=c(2, 3, 2), 
                 dimnames = list(E = E.lv, A = A.lv, S = S.lv))
 E.prob
-Tr.prob <- array(c(0.48, 0.42, 0.10, 0.56, 0.36, 0.08, 0.58, 
+T.prob <- array(c(0.48, 0.42, 0.10, 0.56, 0.36, 0.08, 0.58, 
                    0.24, 0.18, 0.70, 0.21, 0.09), dim=c(3, 2, 2), 
-                 dimnames = list(Tr = Tr.lv, O = O.lv, R = R.lv))
-Tr.prob
+                 dimnames = list(T = T.lv, O = O.lv, R = R.lv))
+T.prob
 
 
 # Making a new dag with same modelstring
@@ -94,7 +97,7 @@ all.equal(dag, dag3)
 
 ## Combine dag and local distributions into object of class bn.fit
 cpt <- list(A = A.prob, S = S.prob, E = E.prob, O = O.prob, 
-            R = R.prob, Tr = Tr.prob)
+            R = R.prob, T = T.prob)
 bn <- custom.fit(dag, cpt)
 bn
 nparams(bn)
@@ -107,3 +110,9 @@ R.cpt <- coef(bn$R); R.cpt
 
 
 ## Estimating the parameters:
+survey <- read.table("data/survey.txt", header=TRUE)
+head(survey)
+
+bn.mle <- bn.fit(dag, data = survey, method = "mle")
+bn.mle$R
+bn$R
