@@ -67,12 +67,12 @@ pnull <- mean(as.numeric(train$atRisk))
 
 #Plot enrichment rate as function of threshold
 p1 <- ggplot(rocFrame, aes(x=threshold)) + 
-      geom_line(aes(y=precision/pnull)) + 
+      geom_line(aes(y=precision/pnull), size=1) + 
       coord_cartesian(xlim=c(0, 0.05), ylim=c(0, 10))
 
 # Plot recall as function of threshold
 p2 <- ggplot(rocFrame, aes(x=threshold)) + 
-      geom_line(aes(y=recall)) + 
+      geom_line(aes(y=recall), size=1) + 
       coord_cartesian(xlim=c(0, 0.05))
 
 nplot(list(p1, p2))
@@ -93,3 +93,16 @@ enrichmentRate
 
 # Advice from logistic model
 coefficients(model)
+
+# Calculating deviance residuals
+pred <- predict(model, newdata=train, type="response")
+
+# to return loglikelihoods for each data point
+loglikComponents <- function (y, py){
+      y*log(py) + (1-y)*log(1-py)
+}
+
+residDeviance <- sign(as.numeric(train$atRisk) - pred) * 
+      sqrt(-2*loglikComponents(as.numeric(train$atRisk), pred))
+
+summary(residDeviance)
