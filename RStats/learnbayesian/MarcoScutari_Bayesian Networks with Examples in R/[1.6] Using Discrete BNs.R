@@ -1,15 +1,5 @@
-library(bnlearn)
-library(Rgraphviz)
-library(gRain)
-
 #install.packages("gRain") #didn't work
-biocLite("gRain")
-
-setwd("/datascience/projects/statisticallyfit/github/learningprogramming/R/RStats/learnbayesian/MarcoScutari_Bayesian Networks with Examples in R")
-
-
-survey <- read.table("data/survey.txt", header=TRUE)
-head(survey)
+#biocLite("gRain")
 
 
 #Are two ndoes directly separated? (d-separated)
@@ -91,4 +81,27 @@ cpquery(bn, event = (S == "M") & (T == "car"), evidence = (E == "high"), n = 10^
 
 # likelihood weighting (lw) is more accurate
 cpquery(bn, event = (S == "M") & (T == "car"), 
-        evidence = list(E == "high"), method="lw")
+        evidence = list(E = "high"), method="lw") #evidence list holds all conditioning variables
+
+# example of more complex query: P(S=M, T=car | {A=young, E=uni} OR {A=adult})
+cpquery(bn, even = (S == "M") & (T == "car"), 
+        evidence = ((A == "young") & (E == "uni")) | (A == "adult"))
+
+
+
+# Using cpdist: returns df containing random obs for variables in nodes that 
+# match evidence
+# Can be used for any type of inference: since it just returns the counts
+SxT <- cpdist(bn, nodes = c("S", "T"), evidence = (E == "high"))
+head(SxT)
+
+# example: produce S and T table and compare to querygrain table
+prop.table(table(SxT))
+SandT.cpt
+
+
+
+### Plotting DAGs
+graphviz.plot(dag) #default layout="dot
+graphviz.plot(dag, layout="fdp")
+graphviz.plot(dag)

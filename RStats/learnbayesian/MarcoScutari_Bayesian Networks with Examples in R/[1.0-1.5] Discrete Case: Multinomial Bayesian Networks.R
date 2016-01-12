@@ -12,6 +12,7 @@
 
 library(bnlearn)
 library(Rgraphviz)
+library(gRain)
 
 setwd("/datascience/projects/statisticallyfit/github/learningprogramming/R/RStats/learnbayesian/MarcoScutari_Bayesian Networks with Examples in R")
 

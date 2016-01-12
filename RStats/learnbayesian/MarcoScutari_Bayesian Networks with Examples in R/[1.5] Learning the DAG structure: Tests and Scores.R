@@ -1,12 +1,3 @@
-library(bnlearn)
-library(Rgraphviz)
-
-setwd("/datascience/projects/statisticallyfit/github/learningprogramming/R/RStats/learnbayesian/MarcoScutari_Bayesian Networks with Examples in R")
-
-
-survey <- read.table("data/survey.txt", header=TRUE)
-head(survey)
-
 
 ### Conditional Independence Tests: identify presence of individual arcs (individual)
 
