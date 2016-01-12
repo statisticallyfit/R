@@ -105,3 +105,21 @@ SandT.cpt
 graphviz.plot(dag) #default layout="dot
 graphviz.plot(dag, layout="fdp")
 graphviz.plot(dag)
+
+# makeing S-E-R black and E grey filled
+hlight <- list(nodes = nodes(dag), arcs = arcs(dag), col="grey", textCol = "grey")
+pp <- graphviz.plot(dag, highlight = hlight)
+edgeRenderInfo(pp) <-
+      list(col = c("S~E" = "black", "E~R" = "black"), 
+           lwd = c("S~E" = 3, "E~R" = 3))
+nodeRenderInfo(pp) <- 
+      list(col = c("S" = "black", "E" = "black", "R" = "black"), 
+           textCol = c("S" = "black", "E" = "black", "R" = "black"), 
+           fill = c("E" = "grey"))
+renderGraph(pp)
+
+# Plotting conditional probability distributions (tables)
+bn.fit.barchart(bn.mle$T, main = "Travel", 
+                xlab = "P(T | R and O)", ylab = "")
+bn.fit.dotplot(bn.mle$T, main = "Travel", 
+               xlab = "P(T | R and O)", ylab = "")
