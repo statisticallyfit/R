@@ -13,3 +13,11 @@ head(survey)
 df <- (nlevels(survey[, "T"]) - 1) * (nlevels(survey[, "E"]) - 1) * 
       nlevels(survey[, "O"]) * nlevels(survey[, "R"]); df
 
+# Test if conditionally independent
+# H0 = T is independent of E | (O & R)
+ci.test("T", "E", c("O", "R"), test="mi", data=survey) # G^2 test
+ci.test("T", "E", c("O", "R"), test="x2", data=survey) # chi-square test
+
+# Should we remove O -> T?
+# H0 = T is independent of O|R
+ci.test("T", "O", "R", test = "x2", data=survey)
