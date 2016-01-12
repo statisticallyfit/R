@@ -81,3 +81,14 @@ chisq.test(SandT.ct) # ha absolutely independent! pvalue=1
 
 
 ### Approximate Inference (monte carlo)
+
+# recompute first cell of SandT.cpt table P(S=M and T=car | E=high)
+SandT.cpt[[1]]
+cpquery(bn, event = (S == "M") & (T == "car"), evidence = (E == "high"))
+
+#improve approximationg by increasing number of random observations
+cpquery(bn, event = (S == "M") & (T == "car"), evidence = (E == "high"), n = 10^6)
+
+# likelihood weighting (lw) is more accurate
+cpquery(bn, event = (S == "M") & (T == "car"), 
+        evidence = list(E == "high"), method="lw")
