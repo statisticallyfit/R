@@ -24,6 +24,8 @@ ci.test("T", "E", c("O", "R"), test="x2", data=survey) # chi-square test
 ci.test("T", "O", "R", test = "x2", data=survey)
 
 # Test all - strength = p-value
+# reports p-value of criterion difference in models: dag_before vs dag_after
+# where dag_after has that particular arc removed. 
 arc.strength(dag, data = survey, criterion = "x2")
 
 
@@ -45,3 +47,14 @@ modelstring(rnd)
 score(rnd, data = survey, type="bic") # so dag is better than random! explains some structure
 
 
+# Hill-climbing algorithm to find the DAG that maximizes network score
+learned <- hc(survey) # the algorithm returns a DAG
+modelstring(learned)
+arc.strength(learned, data = survey, criterion = "x2")
+arc.strength(dag, data = survey, criterion = "x2")
+# reports change in bic score caused by respective arc removal
+arc.strength(learned, data = survey, criterion = "bic") #before score < after arc removal score
+arc.strength(dag, data = survey, criterion = "bic") #more after scores are better...
+
+learned2 <- hc(survey, score="bde")
+modelstring(learned2)
