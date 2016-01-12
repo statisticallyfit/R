@@ -3,9 +3,16 @@
 # or click on the "onlin" link under Features, last bullet
 # https://www.crcpress.com/Bayesian-Networks-With-Examples-in-R/Scutari-Denis/9781482225587
 
+#install.packages("bnlearn")
+
+#to install Rgraphviz need to source bioconductor
+#source("http://bioconductor.org/biocLite.R")
+#biocLite("Rgraphviz") #now installed!
+
 
 library(bnlearn)
-#install.packages("bnlearn")
+library(Rgraphviz)
+
 setwd("/datascience/projects/statisticallyfit/github/learningprogramming/R/RStats/learnbayesian/MarcoScutari_Bayesian Networks with Examples in R")
 
 
@@ -31,6 +38,7 @@ dag
 modelstring(dag)
 nodes(dag)
 arcs(dag)
+graphviz.plot(dag)
 
 # Less-cumbersome method to set arcs to nodes
 dag2 <- empty.graph(nodes = c("A", "S", "E", "O", "R", "T"))
@@ -115,14 +123,20 @@ head(survey)
 
 bn.mle <- bn.fit(dag, data = survey, method = "mle")
 
-# checking results..
-bn.mle$R
-bn$R
-
-bn.mle$O
 # can also be computed manually:
 prop.table(table(survey[, c("O", "E")]), margin = 2)
+bn.mle$O
 
 # Estimating same conditional probabilities using bayes posteriors
-bn.bayes <- bn.fit(dag, data=survey, method="bayes", iss=10)
-bn.bayes
+bn.bayes1 <- bn.fit(dag, data=survey, method="bayes", iss=10)
+bn.bayes1$O
+bn.mle$O
+bn$O
+# NOTE: bn.bayes$O posterior estimates are all more centered between 0 and 1
+# than bn.mle$O estimates due to influence of prior distribution. 
+
+# Higher iss -> more weight to prior and is reflected in posterior
+bn.bayes2 <- bn.fit(dag, data=survey, method="bayes", iss=20)
+bn.bayes2$O
+bn.mle$O
+bn$O
