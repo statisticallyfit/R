@@ -3,6 +3,7 @@
 
 
 #Are two ndoes directly separated? (d-separated)
+graphviz.plot(dag)
 dsep(dag, x = "S", y = "R")
 dsep(dag, x = "O", y = "R")
 path(dag, from = "S", to="R")

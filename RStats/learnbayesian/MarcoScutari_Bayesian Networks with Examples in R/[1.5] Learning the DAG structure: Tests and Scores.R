@@ -40,7 +40,7 @@ score(rnd, data = survey, type="bic") # so dag is better than random! explains s
 
 # Hill-climbing algorithm to find the DAG that maximizes network score
 learned <- hc(survey) # the algorithm returns a DAG
-modelstring(learned)
+modelstring(learned); graphviz.plot(learned)
 arc.strength(learned, data = survey, criterion = "x2")
 arc.strength(dag, data = survey, criterion = "x2")
 # reports change in bic score caused by respective arc removal
@@ -49,3 +49,4 @@ arc.strength(dag, data = survey, criterion = "bic") #more after scores are bette
 
 learned2 <- hc(survey, score="bde")
 modelstring(learned2)
+graphviz.plot(learned2)
