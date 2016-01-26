@@ -1,5 +1,6 @@
 #install.packages("gRain") #didn't work
 #biocLite("gRain")
+library(lattice)
 
 
 #Are two ndoes directly separated? (d-separated)
@@ -142,13 +143,15 @@ distr <- data.frame(Evidence = Evidence, Travel = Travel,
                              0.5620, 0.2806, 0.15730, 
                              0.4838, 0.4170, 0.0990))
 distr
+
+# layout=c(3,1) but I changed it to 1,1
 barchart(Travel ~ Prob | Evidence, data=distr, 
          layout = c(3,1), xlab = "probability", 
          scales = list(alternating = 1, tck = c(1, 0)), 
          strip = strip.custom(factor.levels = 
                                     c(expression(P(T)), 
-                                      expression(P({T} * " | " * {S == F})),
-                                      expression(P({T} * " | " * {R == small})))), 
+                                      expression(P({T} * "|" * {S == F})),
+                                      expression(P({T} * "|" * {R == small})))), 
          panel = function(...) {
                panel.barchart(...)
                panel.grid(h = 0, v = -1)
