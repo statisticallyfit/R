@@ -55,7 +55,7 @@ SandT.cpt # This is P(S and T | E = high)
 querygrain(jedu, nodes = c("S", "T"), type = "marginal") # P(S|E=high) with P(T|E=high)
 querygrain(jedu, nodes = c("S", "T"), type = "conditional") # P(S|T|E=high)
 
-# last one: NOTE:
+# for the last one, we discovered: 
 # P(S=F | T=t | E=high) = P(S=F | E=high)
 # P(S=M | T=t | E=high) = P(S=M | E=high), which means
 # S is independent of T conditional on E. Gender does not tell of transport
@@ -105,18 +105,18 @@ SandT.cpt
 ### Plotting DAGs
 graphviz.plot(dag) #default layout="dot
 graphviz.plot(dag, layout="fdp")
-graphviz.plot(dag)
+graphviz.plot(dag, layout="circo")
 
 # makeing S-E-R black and E grey filled
 hlight <- list(nodes = nodes(dag), arcs = arcs(dag), col="grey", textCol = "grey")
 pp <- graphviz.plot(dag, highlight = hlight)
 edgeRenderInfo(pp) <-
-      list(col = c("S~E" = "black", "E~R" = "black"), 
+      list(col = c("S~E" = "dodgerblue", "E~R" = "purple"), 
            lwd = c("S~E" = 3, "E~R" = 3))
 nodeRenderInfo(pp) <- 
-      list(col = c("S" = "black", "E" = "black", "R" = "black"), 
+      list(col = c("S" = "dodgerblue", "E" = "gold", "R" = "purple"), 
            textCol = c("S" = "black", "E" = "black", "R" = "black"), 
-           fill = c("E" = "grey"))
+           fill = c("E" = "yellow"))
 renderGraph(pp)
 
 # Plotting conditional probability distributions (tables)
@@ -124,3 +124,32 @@ bn.fit.barchart(bn.mle$T, main = "Travel",
                 xlab = "P(T | R and O)", ylab = "")
 bn.fit.dotplot(bn.mle$T, main = "Travel", 
                xlab = "P(T | R and O)", ylab = "")
+
+
+# Plotting this info: 
+# This is P(T)
+#jsex <- setEvidence(junction, nodes = "S", states = "F")
+#querygrain(junction, nodes = "T")$T ###### P(T)
+#querygrain(jsex, nodes = "T")$T     ###### P(T | S = female)
+#querygrain(jres, nodes = "T")$T     ###### P(T | R=small)
+Evidence <- factor(c(rep("Unconditional",3), rep("Female", 3), 
+                     rep("Small City", 3)), 
+                   levels = c("Unconditional", "Female", "Small City"))
+Travel <- factor(rep(c("car", "train", "other"), 3), 
+                 levels = c("other", "train", "car"))
+distr <- data.frame(Evidence = Evidence, Travel = Travel, 
+                    Prob = c(0.5618, 0.2808, 0.15730, 
+                             0.5620, 0.2806, 0.15730, 
+                             0.4838, 0.4170, 0.0990))
+distr
+barchart(Travel ~ Prob | Evidence, data=distr, 
+         layout = c(3,1), xlab = "probability", 
+         scales = list(alternating = 1, tck = c(1, 0)), 
+         strip = strip.custom(factor.levels = 
+                                    c(expression(P(T)), 
+                                      expression(P({T} * " | " * {S == F})),
+                                      expression(P({T} * " | " * {R == small})))), 
+         panel = function(...) {
+               panel.barchart(...)
+               panel.grid(h = 0, v = -1)
+         })
