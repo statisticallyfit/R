@@ -14,7 +14,7 @@ library(bnlearn)
 library(Rgraphviz)
 library(gRain)
 
-setwd("/datascience/projects/statisticallyfit/github/learningprogramming/R/RStats/learnbayesian/MarcoScutari_Bayesian Networks with Examples in R")
+setwd("/datascience/projects/statisticallyfit/github/learningprogramming/R/RStats/learnbayesian/MarcoScutari_Bayesian Networks with Examples in R/Chapter1: Discrete Case")
 
 
 # directed acyclic graph (dag)
@@ -119,7 +119,7 @@ R.cpt <- coef(bn$R); R.cpt
 
 
 ## Estimating the parameters:
-survey <- read.table("data/survey.txt", header=TRUE)
+survey <- read.table("../data/survey.txt", header=TRUE)
 head(survey)
 
 bn.mle <- bn.fit(dag, data = survey, method = "mle")

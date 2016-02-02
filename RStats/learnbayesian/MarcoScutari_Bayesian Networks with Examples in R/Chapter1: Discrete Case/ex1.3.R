@@ -17,7 +17,7 @@ modelstring(dag)
 
 # 4. Fit the parameters of the network from the survey data
 # using their Bayesian estimators and save result in bn.fit.ex
-survey.ex <- read.table("data/survey.txt", header=TRUE)
+survey.ex <- read.table("../data/survey.txt", header=TRUE)
 head(survey.ex)
 bn.fit.ex <- bn.fit(dag, survey.ex, method="bayes")
 bn.fit.ex
