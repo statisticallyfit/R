@@ -55,3 +55,30 @@ prminwge.ts <- ts(data.frame(year=prminwge$year, lprepop=prminwge$lprepop,
                              lmincov=prminwge$lmincov, lusgnp=prminwge$lusgnp))
 head(prminwge.ts)
 autoplot(prminwge.ts, ts.size=1)
+
+
+
+
+# Example 10.4
+fertil3<-read.dta('fertil3.dta')
+
+lm.10.4.1<-lm(gfr ~ pe + ww2 + pill, data=fertil3)
+summary(lm.10.4.1)
+
+lm.10.4.2<-lm(gfr ~ pe + pe_1 + pe_2 + ww2 + pill, data=fertil3)
+summary(lm.10.4.2)
+
+# Joint significance of pe values
+lm.10.4.2res<-lm(gfr ~ ww2 + pill, data=fertil3,subset=(is.na(pe_2)==FALSE))
+anova(lm.10.4.2,lm.10.4.2res)
+
+# Joint significance of lagged pe values
+lm.10.4.2res2<-lm(gfr ~ pe + ww2 + pill, data=fertil3,subset=(is.na(pe_2)==FALSE))
+anova(lm.10.4.2,lm.10.4.2res2)
+
+# Standard error of the long run propensity
+with(fertil3,
+     {
+      p1p0<-pe_1-pe
+      p2p1<-pe_2-pe_1
+      print(summary(lm(gfr ~ pe + p1p0 + p2p1 + ww2 + pill)))})
