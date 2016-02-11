@@ -100,3 +100,14 @@ with(fertil3,
 # so theta (LRP) coefficient (on pe) is significant. There is a 
 # significant long-run effect of pe. 
 
+
+# Observe that pe and pe_1 are autocorrelated since they have a correlation
+r <- cor(fertil3$pe, fertil3$pe_1, use="complete.obs") 
+r.test <- cor.test(fertil3$pe, fertil3$pe_1, use="complete.obs") 
+# t-stat = (r - rho) / sqrt((1 - r^2)/(n-2)), here rho=0
+tstat <- r /  sqrt((1 - r^2)/(71-2))
+tstat; r.test$statistic
+# covariance:
+p <- fertil3$pe[2:72] 
+p1 <- fertil3$pe_1[2:72]
+cov(p, p1) / sqrt(var(p)*var(p1))  # is the same as correlation coefficient
