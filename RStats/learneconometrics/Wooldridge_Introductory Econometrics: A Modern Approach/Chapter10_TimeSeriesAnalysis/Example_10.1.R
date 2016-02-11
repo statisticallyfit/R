@@ -18,9 +18,10 @@ phillips <- read.dta('phillips.dta')
 lm.10.1 <- lm(inf ~ unem, data=phillips)
 summary(lm.10.1)
 
-phillips.ts <- ts(phillips[0:2])
+phillips.ts <- ts(phillips[,2], start=1948) # how to set names?
+autoplot(lm.10.1)
 autoplot(phillips.ts, ts.size = 1, ts.colour = "red")
-ggplot(phillips.ts, aes(year, unem)) + geom_line(lwd=1) + xlab("year") + ylab("unem")
+#ggplot(phillips.ts, aes(year, unem)) + geom_line(lwd=1) + xlab("year") + ylab("unem")
 
 
 # Example 10.2
@@ -35,13 +36,13 @@ lm.10.2$fitted.values
 lm.10.2$coefficients
 lm.10.2$model
 
-intdef.ts <- ts(data.frame(intdef[,1:3], def=intdef[,6]))
+intdef.ts <- ts(data.frame(intdef[,2:3], def=intdef[,6]), start=1948)
 head(intdef.ts)
 autoplot(intdef.ts, ts.size=1, ts.colour="blue")
 # Or individual ggplots
-ggplot(intdef.ts, aes(year, i3)) + geom_line(lwd=1) + xlab("year") + ylab("i3")
-ggplot(intdef.ts, aes(year, inf)) + geom_line(lwd=1) + xlab("year") + ylab("inf")
-ggplot(intdef.ts, aes(year, def)) + geom_line(lwd=1) + xlab("year") + ylab("def")
+#ggplot(intdef.ts, aes(year, i3)) + geom_line(lwd=1) + xlab("year") + ylab("i3")
+#ggplot(intdef.ts, aes(year, inf)) + geom_line(lwd=1) + xlab("year") + ylab("inf")
+#ggplot(intdef.ts, aes(year, def)) + geom_line(lwd=1) + xlab("year") + ylab("def")
 
 
 
@@ -51,30 +52,40 @@ prminwge <- read.dta('prminwge.dta')
 lm.10.3 <- lm(lprepop ~ lmincov + lusgnp, data=prminwge)
 summary(lm.10.3)
 
-prminwge.ts <- ts(data.frame(year=prminwge$year, lprepop=prminwge$lprepop, 
-                             lmincov=prminwge$lmincov, lusgnp=prminwge$lusgnp))
-head(prminwge.ts)
+prminwge.ts <- ts(data.frame(lprepop=prminwge$lprepop, lmincov=prminwge$lmincov, 
+                             lusgnp=prminwge$lusgnp), start=1950)
+prminwge.ts
 autoplot(prminwge.ts, ts.size=1)
 
 
 
 
 # Example 10.4
-fertil3<-read.dta('fertil3.dta')
+fertil3 <- read.dta('fertil3.dta')
+# view the data
+fertil3.ts <- ts(data.frame(gfr=fertil3$gfr, pe=fertil3$pe, 
+                            pe_1=fertil3$pe_1, pe_2=fertil3$pe_2, 
+                            pill=fertil3$pill, ww2=fertil3$ww2), start=1913)
+autoplot(fertil3.ts, ts.size=1, ts.colour="deeppink1")
 
-lm.10.4.1<-lm(gfr ~ pe + ww2 + pill, data=fertil3)
+# create the model
+lm.10.4.1 <- lm(gfr ~ pe + ww2 + pill, data=fertil3)
 summary(lm.10.4.1)
 
-lm.10.4.2<-lm(gfr ~ pe + pe_1 + pe_2 + ww2 + pill, data=fertil3)
+lm.10.4.2 <- lm(gfr ~ pe + pe_1 + pe_2 + ww2 + pill, data=fertil3)
+lm.10.4.2
 summary(lm.10.4.2)
 
 # Joint significance of pe values
-lm.10.4.2res<-lm(gfr ~ ww2 + pill, data=fertil3,subset=(is.na(pe_2)==FALSE))
-anova(lm.10.4.2,lm.10.4.2res)
+lm.10.4.2res <- lm(gfr ~ ww2 + pill, data=fertil3,subset=(is.na(pe_2)==FALSE))
+lm.10.4.2res
+anova(lm.10.4.2, lm.10.4.2res)
 
 # Joint significance of lagged pe values
-lm.10.4.2res2<-lm(gfr ~ pe + ww2 + pill, data=fertil3,subset=(is.na(pe_2)==FALSE))
-anova(lm.10.4.2,lm.10.4.2res2)
+lm.10.4.2res2 <- lm(gfr ~ pe + ww2 + pill, data=fertil3,subset=(is.na(pe_2)==FALSE))
+lm.10.4.2res2
+lm.10.4.1
+anova(lm.10.4.2, lm.10.4.2res2)
 
 # Standard error of the long run propensity
 with(fertil3,
@@ -82,3 +93,5 @@ with(fertil3,
       p1p0<-pe_1-pe
       p2p1<-pe_2-pe_1
       print(summary(lm(gfr ~ pe + p1p0 + p2p1 + ww2 + pill)))})
+
+
