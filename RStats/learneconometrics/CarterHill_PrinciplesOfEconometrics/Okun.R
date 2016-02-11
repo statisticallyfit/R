@@ -27,13 +27,13 @@ head(okunData); tail(okunData)
 
 # Method 2 of creating time vector (easy way)
 # uses rolling shift provided by lag() method
-okun.ts <- ts(okunData[,2:ncol(okunData)], start=1985, frequency=4)
+okun.ts <- ts(okunData[,-1], start=1985, frequency=4)
 okun.ts <- lag(okun.ts, -1)
 okun.ts
 okun.ts <- na.omit(okun.ts)
 okun.ts
 
-
+okunData[,-1]
 
 # Calculate autocorrelation coefficients for Gt
 g <- okunData$Gt 
@@ -44,6 +44,7 @@ c3 <- 1/98 * sum( (g[1:95] - mean(g)) * (g[4:98] - mean(g)) )
 c4 <- 1/98 * sum( (g[1:94] - mean(g)) * (g[5:98] - mean(g)) )
 c5 <- 1/98 * sum( (g[1:93] - mean(g)) * (g[6:98] - mean(g)) )
 c6 <- 1/98 * sum( (g[1:92] - mean(g)) * (g[7:98] - mean(g)) )
+
 
 r1 <- c1/c0; r2 <- c2/c0; r3 <- c3/c0; r4 <- c4/c0
 r5 <- c5/c0; r6 <- c6/c0
@@ -68,12 +69,12 @@ p3 <- 1 - pnorm(z3)
 p4 <- 1 - pnorm(z4)
 p5 <- 1 - pnorm(z5)
 p6 <- 1 - pnorm(z6)
-tbl <- data.frame(Z=round(c(z1, z2,z3,z4,z5,z6), 5), 
+tbl <- data.frame(R=round(c(r1,r2,r3,r4,r5,r6), 5),
+                  Z=round(c(z1, z2,z3,z4,z5,z6), 5), 
                   P=round(c(p1,p2,p3,p4,p5,p6), 5))
 tbl
 
 
 
 # Correlogram
-autoplot(acf(okun.ts, lag.max=12, plot=FALSE))
-
+autoplot(acf(okun.ts, lag.max=12, plot=FALSE)) # todo: why doesn't it work??

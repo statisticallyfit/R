@@ -5,6 +5,7 @@ library(car)
 
 # 2.2 Reading Data
 kings = scan("http://robjhyndman.com/tsdldata/misc/kings.dat", skip=3)
+kings
 kings.ts = ts(kings)
 # freq=number of times per year the data was collected
 kings.ts
