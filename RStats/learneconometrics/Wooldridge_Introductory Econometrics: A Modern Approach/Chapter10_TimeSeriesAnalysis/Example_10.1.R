@@ -90,11 +90,13 @@ lm.10.4.2res2
 lm.10.4.2
 anova(lm.10.4.2res2, lm.10.4.2)
 
-# Standard error of the long run propensity
+# Standard error of the long run propensity (running the theta=LRP regression
+# to get standard error of the coefficient on pe)
 with(fertil3,
      {
-      p1p0<-pe_1-pe
-      p2p1<-pe_2-pe_1
+      p1p0 <- pe_1-pe
+      p2p1 <- pe_2-pe_1
       print(summary(lm(gfr ~ pe + p1p0 + p2p1 + ww2 + pill)))})
-
+# so theta (LRP) coefficient (on pe) is significant. There is a 
+# significant long-run effect of pe. 
 
