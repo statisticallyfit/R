@@ -68,24 +68,27 @@ fertil3.ts <- ts(data.frame(gfr=fertil3$gfr, pe=fertil3$pe,
                             pill=fertil3$pill, ww2=fertil3$ww2), start=1913)
 autoplot(fertil3.ts, ts.size=1, ts.colour="deeppink1")
 
-# create the model
+# create the models
 lm.10.4.1 <- lm(gfr ~ pe + ww2 + pill, data=fertil3)
 summary(lm.10.4.1)
 
+# multicollinearity between pe, pe1, pe2 makes it hard to estimate their coefs
 lm.10.4.2 <- lm(gfr ~ pe + pe_1 + pe_2 + ww2 + pill, data=fertil3)
 lm.10.4.2
 summary(lm.10.4.2)
 
 # Joint significance of pe values
-lm.10.4.2res <- lm(gfr ~ ww2 + pill, data=fertil3,subset=(is.na(pe_2)==FALSE))
-lm.10.4.2res
-anova(lm.10.4.2, lm.10.4.2res)
+lm.10.4.2res <- lm(gfr ~ ww2 + pill, data=fertil3, subset=(is.na(pe_2)==FALSE))
+lm.10.4.2res #called the restricted model, and lm.10.4.2 is the unrestricted model
+lm.10.4.2
+anova(lm.10.4.2res, lm.10.4.2)
+
 
 # Joint significance of lagged pe values
-lm.10.4.2res2 <- lm(gfr ~ pe + ww2 + pill, data=fertil3,subset=(is.na(pe_2)==FALSE))
+lm.10.4.2res2 <- lm(gfr ~ pe + ww2 + pill, data=fertil3, subset=(is.na(pe_2)==FALSE))
 lm.10.4.2res2
-lm.10.4.1
-anova(lm.10.4.2, lm.10.4.2res2)
+lm.10.4.2
+anova(lm.10.4.2res2, lm.10.4.2)
 
 # Standard error of the long run propensity
 with(fertil3,
