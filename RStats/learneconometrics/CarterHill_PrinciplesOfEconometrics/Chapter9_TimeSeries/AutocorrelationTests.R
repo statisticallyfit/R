@@ -93,7 +93,7 @@ okun.acf <- acf(okun.ts, lag.max=46, plot=FALSE) #lag.max=98/2 (halfish num of o
 okun.acf
 
 
-4# 2. PHILLIPS CURVE
+4# 2. LAGRANGE MULTIPLIER TEST
 www <- "http://www.econometrics.com/comdata/hill4/phillips_aus.dat"
 phillips <- read.table(www, header=TRUE)
 head(phillips)
