@@ -3,6 +3,7 @@
 # the adf.test does
 
 setwd("/datascience/projects/statisticallyfit/github/learningprogramming/R/RStats/learneconometrics/CarterHill_PrinciplesOfEconometrics")
+rm(list=ls())
 
 www <- "http://www.econometrics.com/comdata/hill4/okun.dat"
 okun <- read.table(www, header=TRUE)
@@ -36,7 +37,6 @@ okun.ts <- lag(okun.ts, -1)
 okun.ts
 okun.ts <- na.omit(okun.ts)
 okun.ts
-okun.acf <- acf(okun.ts, plot=FALSE)
 
 
 # Calculate autocorrelation coefficients for Gt
@@ -49,7 +49,6 @@ c4 <- 1/98 * sum( (g[1:94] - mean(g)) * (g[5:98] - mean(g)) )
 c5 <- 1/98 * sum( (g[1:93] - mean(g)) * (g[6:98] - mean(g)) )
 c6 <- 1/98 * sum( (g[1:92] - mean(g)) * (g[7:98] - mean(g)) )
 
-
 r1 <- c1/c0; r2 <- c2/c0; r3 <- c3/c0; r4 <- c4/c0
 r5 <- c5/c0; r6 <- c6/c0
 r1; r2; r3; r4; r5; r6
@@ -60,13 +59,12 @@ z1 <- r1*sqrt(98); z1                 # z-statistic
 t1 = r1 / sqrt((1 - r1^2)/(98-2)); t1 # t-statistic
 cor.test(g[1:97], g[2:98])            # so autocorcoef is NOT same as corcoef
 
-# z-statistics
 z2 <- r2*sqrt(98)
 z3 <- r3*sqrt(98)
 z4 <- r4*sqrt(98)
 z5 <- r5*sqrt(98)
 z6 <- r6*sqrt(98)
-# p-values
+
 p1 <- 1 - pnorm(z1)
 p2 <- 1 - pnorm(z2)
 p3 <- 1 - pnorm(z3)
@@ -75,9 +73,7 @@ p5 <- 1 - pnorm(z5)
 p6 <- 1 - pnorm(z6)
 tbl <- data.frame(R=round(c(r1,r2,r3,r4,r5,r6), 5),
                   Z=round(c(z1, z2,z3,z4,z5,z6), 5), 
-                  P=round(c(p1,p2,p3,p4,p5,p6), 5))
-tbl
-
+                  P=round(c(p1,p2,p3,p4,p5,p6), 5)); tbl
 
 
 
@@ -90,11 +86,14 @@ tbl
 
 # @todo: why when lag.max=12 does graph show only 3 lags?
 # Equation: DU ~ Gt + Gt_1 + Gt_2
-autoplot(acf(okun.ts, lag.max=12, plot=FALSE)) # todo: why doesn't it work??
+autoplot(acf(okun.ts, lag.max=12, plot=FALSE)) 
+autoplot(acf(okun.ts, lag.max=98/2, plot=FALSE)) 
+# WARNING: this is the acfs of Gt, not of y or residuals, so is not same as r1...
+okun.acf <- acf(okun.ts, lag.max=46, plot=FALSE) #lag.max=98/2 (halfish num of obs)
+okun.acf
 
 
-
-# 2. PHILLIPS CURVE
+4# 2. PHILLIPS CURVE
 www <- "http://www.econometrics.com/comdata/hill4/phillips_aus.dat"
 phillips <- read.table(www, header=TRUE)
 head(phillips)
@@ -126,7 +125,18 @@ c4 <- 1/90 * sum( (res[1:86] - mean(res)) * (res[5:90] - mean(res)) )
 c5 <- 1/90 * sum( (res[1:85] - mean(res)) * (res[6:90] - mean(res)) )
 c6 <- 1/90 * sum( (res[1:84] - mean(res)) * (res[7:90] - mean(res)) )
 
+# why aren't the r1.. exactly equal to the ones in the book?
 r1 <- c1/c0; r2 <- c2/c0; r3 <- c3/c0; r4 <- c4/c0; r5 <- c5/c0; r6 <- c6/c0
 r1; r2; r3; r4; r5; r6
 
-autoplot(acf(res, plot=FALSE), ylab = "residual acfs")
+autoplot(acf(res, plot=FALSE), ylab = "residual autocorrelations")
+phillips.acf <- acf(res, plot=FALSE)
+phillips.acf
+
+# scatterplot
+ggplot(data=phillips, aes(x=DU, y=inf)) + geom_point(shape=19) + geom_smooth(method="lm")
+phillipsRes <- data.frame(du=na.omit(phillips$DU), resids=res)
+# residual plot
+ggplot(phillipsRes, aes(x=du, y=resids)) + geom_point(shape=19)
+
+
