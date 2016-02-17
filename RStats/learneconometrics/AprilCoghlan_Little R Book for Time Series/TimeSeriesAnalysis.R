@@ -13,14 +13,18 @@ autoplot(kings.ts)
 
 # 2.3 Plotting Time Series
 births = scan("http://robjhyndman.com/tsdldata/data/nybirths.dat")
+births
 births.ts = ts(births, freq=12, start=c(1946,1))
 births.ts
 autoplot(births.ts)
+#autoplot(acf(births.ts))
 
 souvenir = scan("http://robjhyndman.com/tsdldata/data/fancy.dat")
+souvenir
 souvenir.ts = ts(souvenir, freq=12, start=c(1987, 1))
 souvenir.ts
 autoplot(souvenir.ts)
+autoplot(acf(souvenir.ts))
 # seasonal increases with time so must do log transform
 logsouvenir.ts = log(souvenir.ts)
 autoplot(logsouvenir.ts)

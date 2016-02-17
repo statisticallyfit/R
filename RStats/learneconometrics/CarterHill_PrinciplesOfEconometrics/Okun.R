@@ -27,13 +27,12 @@ head(okunData); tail(okunData)
 
 # Method 2 of creating time vector (easy way)
 # uses rolling shift provided by lag() method
-okun.ts <- ts(okunData[,-1], start=1985, frequency=4)
+okun.ts <- ts(okunData$DU, start=1985, frequency=4)
 okun.ts <- lag(okun.ts, -1)
 okun.ts
 okun.ts <- na.omit(okun.ts)
 okun.ts
 
-okunData[,-1]
 
 # Calculate autocorrelation coefficients for Gt
 g <- okunData$Gt 
@@ -76,5 +75,17 @@ tbl
 
 
 
-# Correlogram
+
+
+# =============================================================================
+
+# METHODS TO TEST FOR AUTOCORRELATION:
+
+# 1. CORRELOGRAM (for acf to work, must be just 1 variable in .ts, alongside time)
+
+# @todo: why when lag.max=12 does graph show only 3 lags?
 autoplot(acf(okun.ts, lag.max=12, plot=FALSE)) # todo: why doesn't it work??
+
+
+
+# 2. PHILLIPS CURVE
