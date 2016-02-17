@@ -1,3 +1,7 @@
+#install.packages("fUnitRoots")
+# This package's adfTest does not detrend the time series before testing, like
+# the adf.test does
+
 setwd("/datascience/projects/statisticallyfit/github/learningprogramming/R/RStats/learneconometrics/CarterHill_PrinciplesOfEconometrics")
 
 www <- "http://www.econometrics.com/comdata/hill4/okun.dat"
@@ -32,6 +36,7 @@ okun.ts <- lag(okun.ts, -1)
 okun.ts
 okun.ts <- na.omit(okun.ts)
 okun.ts
+okun.acf <- acf(okun.ts, plot=FALSE)
 
 
 # Calculate autocorrelation coefficients for Gt
@@ -84,8 +89,44 @@ tbl
 # 1. CORRELOGRAM (for acf to work, must be just 1 variable in .ts, alongside time)
 
 # @todo: why when lag.max=12 does graph show only 3 lags?
+# Equation: DU ~ Gt + Gt_1 + Gt_2
 autoplot(acf(okun.ts, lag.max=12, plot=FALSE)) # todo: why doesn't it work??
 
 
 
 # 2. PHILLIPS CURVE
+www <- "http://www.econometrics.com/comdata/hill4/phillips_aus.dat"
+phillips <- read.table(www, header=TRUE)
+head(phillips)
+tail(phillips)
+
+# add a DU column
+phillips$DU <- c(diff(phillips$u), NA)
+
+inf.ts <- ts(phillips$inf, start=1987, frequency = 4)
+u.ts <- ts(phillips$u, start=1987, frequency = 4)
+du.ts <- na.omit(ts(phillips$DU, start=1987, frequency = 4))
+
+autoplot(inf.ts)
+autoplot(u.ts)
+autoplot(du.ts)
+ 
+# Equation: INF ~ DU 
+inf.lm <- lm(data=phillips, inf ~ DU)  #todo: why different than book? (page 352)
+summary(inf.lm)
+
+
+# Calculate autocorrelation coefficients for residuals from INF ~ DU
+res <- inf.lm$residuals
+c0 <- 1/90 * sum( (res[1:90] - mean(res)) * (res[1:90] - mean(res)) )
+c1 <- 1/90 * sum( (res[1:89] - mean(res)) * (res[2:90] - mean(res)) )
+c2 <- 1/90 * sum( (res[1:88] - mean(res)) * (res[3:90] - mean(res)) )
+c3 <- 1/90 * sum( (res[1:87] - mean(res)) * (res[4:90] - mean(res)) )
+c4 <- 1/90 * sum( (res[1:86] - mean(res)) * (res[5:90] - mean(res)) )
+c5 <- 1/90 * sum( (res[1:85] - mean(res)) * (res[6:90] - mean(res)) )
+c6 <- 1/90 * sum( (res[1:84] - mean(res)) * (res[7:90] - mean(res)) )
+
+r1 <- c1/c0; r2 <- c2/c0; r3 <- c3/c0; r4 <- c4/c0; r5 <- c5/c0; r6 <- c6/c0
+r1; r2; r3; r4; r5; r6
+
+autoplot(acf(res, plot=FALSE), ylab = "residual acfs")
