@@ -1,5 +1,6 @@
 setwd("/datascience/projects/statisticallyfit/github/learningprogramming/R/RStats/learneconometrics/CarterHill_PrinciplesOfEconometrics/Chapter9_TimeSeries")
 rm(list=ls())
+library(foreign)
 # Data from: http://www.principlesofeconometrics.com/poe4/poe4stata.htm
 
 
