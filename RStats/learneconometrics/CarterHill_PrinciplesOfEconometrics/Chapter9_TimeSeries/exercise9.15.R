@@ -22,9 +22,34 @@ summary(bangla.lm)
 autoplot(acf(bangla.lm$residuals, lag.max=34, plot=FALSE))
 
 
+
+# Part b) LM test of autocorrelation (joint test of acf values)
+
 e <- bangla.lm$residuals 
-auxData <- data.frame(lnA=banglaData$lnA, lnP=banglaData$lnP, E_1=c(NA, e[1:33]))
-auxData <- na.omit(auxData)
-head(auxData)
-auxiliary.lm <- lm(data=auxData, E ~ E_1 + lnP)
+banglaData$E <- e 
+banglaData$E_1 <- c(NA, e[1:33])
+banglaData <- na.omit(banglaData)
+head(banglaData)
+auxiliary.lm <- lm(data=banglaData, E ~ lnP + E_1)
 summary(auxiliary.lm)
+33*0.1633
+
+
+phillips <- read.dta("phillips_aus.dta")
+phillipsData <- data.frame(inf=phillips$inf, du=c(NA, diff(phillips$u)))
+phillipsData <- na.omit(phillipsData)
+head(phillipsData)
+tail(phillipsData)
+phillips.lm <- lm(data=phillipsData, inf ~ du)
+summary(phillips.lm)
+
+e <- phillips.lm$residuals
+phillipsData$E <- e
+phillipsData$E_1 <- c(NA, e[1:89])
+phillipsData <- na.omit(phillipsData)
+head(phillipsData)
+
+auxiliary.lm <- lm(data=phillipsData, E ~ du + E_1)
+summary(auxiliary.lm)
+nrow(phillipsData)
+89*0.3102
