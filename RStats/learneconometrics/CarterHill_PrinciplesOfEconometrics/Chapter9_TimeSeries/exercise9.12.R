@@ -44,7 +44,7 @@ okun.lm6
 ## AIC = ln(SSE/N) + 2K/N
 ## BIC = ln(SSE/N) + Kln(N)/N
 
-modelCriteria <- function(y, yhat, K) {
+modelCriteria <- function(y, yhat, K, lag) {
       sse <- sum( (y - yhat)^2 )
       N <- length(y) # Must equal length of yhat
       aic <- log(sse/N) + 2*K/N
@@ -55,19 +55,25 @@ modelCriteria <- function(y, yhat, K) {
       cat("\nAICc: ", aicc)
       cat("\nBIC:  ", bic)
       cat("\nBICc: ", bicc, "\n ")
+      criteriaAndLag <- c(aic, bic, lag)
+      return(invisible(criteriaAndLag)) # yaya this works!!!
 }
 
 # model 0
-modelCriteria(okunData$DU, okun.lm0$fitted.values, 2)
+modelCriteria(okunData$DU, okun.lm0$fitted.values, 2, 0)
 # model 1
-modelCriteria(okunData$DU, okun.lm1$fitted.values, 3)
+modelCriteria(okunData$DU, okun.lm1$fitted.values, 3, 1)
 # model 2
-modelCriteria(okunData$DU, okun.lm2$fitted.values, 4)
+modelCriteria(okunData$DU, okun.lm2$fitted.values, 4, 2)
 # model 3
-modelCriteria(okunData$DU, okun.lm3$fitted.values, 5)
+modelCriteria(okunData$DU, okun.lm3$fitted.values, 5, 3)
 # model 4
-modelCriteria(okunData$DU, okun.lm4$fitted.values, 6)
+modelCriteria(okunData$DU, okun.lm4$fitted.values, 6, 4)
 # model 5
-modelCriteria(okunData$DU, okun.lm5$fitted.values, 7)
+modelCriteria(okunData$DU, okun.lm5$fitted.values, 7, 5)
 # model 6
-modelCriteria(okunData$DU, okun.lm6$fitted.values, 8)
+values <- modelCriteria(okunData$DU, okun.lm6$fitted.values, 8, 6)
+
+
+## returns a vector of 2 elements that show the lags where AIC and BIC are minimum
+# minimizedCriteria <- function()
