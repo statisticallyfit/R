@@ -20,22 +20,32 @@ summary(bangla.lm)
 
 autoplot(acf(bangla.lm$residuals, lag.max=34, plot=FALSE))
 
+e <- bangla.lm$residuals
+lnp <- banglaData$lnP  
+lna <- banglaData$lnA
+banglaRemNA <- data.frame(lnA=lna, lnA_1=c(NA, lna[1:33]), 
+                          lnP=lnp, lnP_1=c(NA, lnp[1:33]), 
+                          E=e, E_1=c(NA, e[1:33]))
+banglaRemNA <- na.omit(banglaRemNA)
+head(banglaRemNA); tail(banglaRemNA)      
+
 
 
 # Part b) LM test of autocorrelation (joint test of acf values)
 
 # method (2) way
-e <- bangla.lm$residuals 
-banglaZero <- banglaData
-banglaZero$E <- e 
-banglaZero$E_1 <- c(0, e[1:33])     # see? 0 instead of NA
+e <- bangla.lm$residuals ; e
+banglaZero <- data.frame(lnA=lna, lnA_1=c(0, lna[1:33]), 
+                          lnP=lnp, lnP_1=c(0, lnp[1:33]), 
+                          E=e, E_1=c(0, e[1:33]))
 head(banglaZero); tail(banglaZero)
+
 lagrange.lm <- lm(data=banglaZero, E ~ lnP + E_1)
 summary(lagrange.lm)
 # calculate R^2 by hand
 sse <- sum( (banglaZero$E - lagrange.lm$fitted.values)^2 )
 sst <- sum( (banglaZero$E - mean(banglaZero$E))^2  )
-R2 <- 1 - sse/sst
+R2 <- 1 - sse/sst; R2
 T <- 34
 LM <- T * R2; LM
 # now compare to chi-statistic and find p-value
@@ -44,3 +54,20 @@ df <- 1
 chi.star <- qchisq(0.95, df); chi.star
 p.value <- 1 - pchisq(LM, df); p.value   # reject the null! there is autocorrelation
 
+
+
+# Part c) calculating HAC stderrors for confidence intervals
+
+### ??? how to do it if you have only 1 predictor??? cannot use examples12.R
+### wooldridge method
+
+
+
+# Part d) estimating an AR(1) model
+ar.lm <- lm(data=banglaRemNA, lnA ~ lnP + lnA_1 + lnP_1)
+summary(ar.lm)
+# df = nrow(banglaRemNA) - 2 = 29
+head(banglaRemNA)
+
+ar.phil.lm <- lm(data=phillipsRemNA, inf ~ du + inf_1 + du_1)
+summary(ar.phil.lm)

@@ -97,10 +97,18 @@ okun.acf
 
 # set up the data, do lm
 phillips <- read.dta("phillips_aus.dta")
-phillipsRemNA <- data.frame(inf=phillips$inf, du=c(NA, diff(phillips$u)))
+i <- phillips$inf
+d <- diff(phillips$u); length(d)
+head(phillips); tail(phillips)
+
+phillipsRemNA <- data.frame(inf=i, inf_1=c(NA, i[1:90]),
+                            du=c(NA, d[1:90]), du_1=c(NA, NA, d[1:89]))
 phillipsRemNA <- na.omit(phillipsRemNA)
 head(phillipsRemNA); tail(phillipsRemNA)
-phillips.lm <- lm(data=phillipsRemNA, inf ~ du); summary(phillips.lm)
+phillips.lm <- lm(data=phillipsRemNA, inf ~ du)
+summary(phillips.lm)
+summaryHAC(phillips.lm)
+
 
 # adding errors, set up data with fewer rows due to the ommitted NAs
 e <- phillips.lm$residuals

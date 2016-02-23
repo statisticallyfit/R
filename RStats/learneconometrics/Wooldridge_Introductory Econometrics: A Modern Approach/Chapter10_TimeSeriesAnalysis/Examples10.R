@@ -49,14 +49,15 @@ autoplot(intdef.ts, ts.size=1, ts.colour="blue")
 # Example 10.3
 prminwge <- read.dta('prminwge.dta')
 
-lm.10.3 <- lm(lprepop ~ lmincov + lusgnp, data=prminwge)
+# this was without lprgnp and t before
+lm.10.3 <- lm(lprepop ~ lmincov + lusgnp , data=prminwge)
 summary(lm.10.3)
 
 prminwge.ts <- ts(data.frame(lprepop=prminwge$lprepop, lmincov=prminwge$lmincov, 
                              lusgnp=prminwge$lusgnp), start=1950)
 prminwge.ts
 autoplot(prminwge.ts, ts.size=1)
-
+autoplot(acf(lm.10.3$residuals, plot=FALSE))
 
 
 
