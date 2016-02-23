@@ -2,7 +2,7 @@
 # This package's adfTest does not detrend the time series before testing, like
 # the adf.test does
 
-setwd("/datascience/projects/statisticallyfit/github/learningprogramming/R/RStats/learneconometrics/CarterHill_PrinciplesOfEconometrics")
+setwd("/datascience/projects/statisticallyfit/github/learningprogramming/R/RStats/learneconometrics/CarterHill_PrinciplesOfEconometrics/Chapter9_TimeSeries")
 rm(list=ls())
 
 www <- "http://www.econometrics.com/comdata/hill4/okun.dat"
@@ -80,7 +80,7 @@ tbl <- data.frame(R=round(c(r1,r2,r3,r4,r5,r6), 5),
 
 # =============================================================================
 
-# METHODS TO TEST FOR AUTOCORRELATION:
+# METHODS TO TEST FOR AUTOCORRELATION OF ERRORS:
 
 # 1. CORRELOGRAM (for acf to work, must be just 1 variable in .ts, alongside time)
 
@@ -93,50 +93,58 @@ okun.acf <- acf(okun.ts, lag.max=46, plot=FALSE) #lag.max=98/2 (halfish num of o
 okun.acf
 
 
-4# 2. LAGRANGE MULTIPLIER TEST
-www <- "http://www.econometrics.com/comdata/hill4/phillips_aus.dat"
-phillips <- read.table(www, header=TRUE)
-head(phillips)
-tail(phillips)
+# 2. LAGRANGE MULTIPLIER TEST (for error autocorrelation)
 
-# add a DU column
-phillips$DU <- c(diff(phillips$u), NA)
+# set up the data, do lm
+phillips <- read.dta("phillips_aus.dta")
+phillipsRemNA <- data.frame(inf=phillips$inf, du=c(NA, diff(phillips$u)))
+phillipsRemNA <- na.omit(phillipsRemNA)
+head(phillipsRemNA); tail(phillipsRemNA)
+phillips.lm <- lm(data=phillipsRemNA, inf ~ du); summary(phillips.lm)
+e <- phillips.lm$residuals
 
-inf.ts <- ts(phillips$inf, start=1987, frequency = 4)
-u.ts <- ts(phillips$u, start=1987, frequency = 4)
-du.ts <- na.omit(ts(phillips$DU, start=1987, frequency = 4))
+# adding errors, set up data with fewer rows due to the ommitted NAs
+phillipsRemNA$E <- e
+phillipsRemNA$E_1 <- c(NA, e[1:89])
+phillipsRemNA <- na.omit(phillipsRemNA)
+head(phillipsRemNA); tail(phillipsRemNA)
 
-autoplot(inf.ts)
-autoplot(u.ts)
-autoplot(du.ts)
- 
-# Equation: INF ~ DU 
-inf.lm <- lm(data=phillips, inf ~ DU)  #todo: why different than book? (page 352)
-summary(inf.lm)
+# set up data set with zero in place of ommitted row
+phillipsZero <- data.frame(inf=phillips$inf, du=c(NA, diff(phillips$u)))
+phillipsZero <- na.omit(phillipsZero)
+phillipsZero$E <- e
+phillipsZero$E_1 <- c(0, e[1:89]) # see? put a zero
+head(phillipsZero)
 
 
-# Calculate autocorrelation coefficients for residuals from INF ~ DU
-res <- inf.lm$residuals
-c0 <- 1/90 * sum( (res[1:90] - mean(res)) * (res[1:90] - mean(res)) )
-c1 <- 1/90 * sum( (res[1:89] - mean(res)) * (res[2:90] - mean(res)) )
-c2 <- 1/90 * sum( (res[1:88] - mean(res)) * (res[3:90] - mean(res)) )
-c3 <- 1/90 * sum( (res[1:87] - mean(res)) * (res[4:90] - mean(res)) )
-c4 <- 1/90 * sum( (res[1:86] - mean(res)) * (res[5:90] - mean(res)) )
-c5 <- 1/90 * sum( (res[1:85] - mean(res)) * (res[6:90] - mean(res)) )
-c6 <- 1/90 * sum( (res[1:84] - mean(res)) * (res[7:90] - mean(res)) )
+# do the test
 
-# why aren't the r1.. exactly equal to the ones in the book?
-r1 <- c1/c0; r2 <- c2/c0; r3 <- c3/c0; r4 <- c4/c0; r5 <- c5/c0; r6 <- c6/c0
-r1; r2; r3; r4; r5; r6
+## method (1)
+lagrange.lm.1 <- lm(data=phillipsRemNA, E ~ du + E_1)
+summary(lagrange.lm.1)    # df = N-2 = 89-2 = 87 (why df=86 in summary???)
+T.1 <- nrow(phillipsRemNA)
+LM.1 <- T.1 * 0.3102; LM.1
 
-autoplot(acf(res, plot=FALSE), ylab = "residual autocorrelations")
-phillips.acf <- acf(res, plot=FALSE)
-phillips.acf
+## method (2)
+lagrange.lm.2 <- lm(data=phillipsZero, E ~ du + E_1)
+summary(lagrange.lm.2)
+T.2 <- nrow(phillipsZero)
+LM.2 <- T.2 * 0.3066; LM.2
 
-# scatterplot
-ggplot(data=phillips, aes(x=DU, y=inf)) + geom_point(shape=19) + geom_smooth(method="lm")
-phillipsRes <- data.frame(du=na.omit(phillips$DU), resids=res)
-# residual plot
-ggplot(phillipsRes, aes(x=du, y=resids)) + geom_point(shape=19)
 
+# 3. T-TEST (for error autocorrelation)
+
+## method (1)
+ttest.lm.1 <- lm(data=phillipsRemNA, inf ~ du + E_1)
+summary(ttest.lm.1) # see? t-value is 6.219, df = N-2 = 88-2 = 86
+anova(ttest.lm.1)   # see? F-value is 38.67
+
+## method (2)
+ttest.lm.2 <- lm(data=phillipsZero, inf ~ du + E_1)
+summary(ttest.lm.2)     # see? t-value is 6.202, df = N-2 = 89-2 = 87
+anova(ttest.lm.2)       # see? F-value is 38.47
+
+
+
+# 4. DURBIN-WATSON TEST (for error autocorrelation)
 
