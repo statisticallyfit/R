@@ -101,9 +101,9 @@ phillipsRemNA <- data.frame(inf=phillips$inf, du=c(NA, diff(phillips$u)))
 phillipsRemNA <- na.omit(phillipsRemNA)
 head(phillipsRemNA); tail(phillipsRemNA)
 phillips.lm <- lm(data=phillipsRemNA, inf ~ du); summary(phillips.lm)
-e <- phillips.lm$residuals
 
 # adding errors, set up data with fewer rows due to the ommitted NAs
+e <- phillips.lm$residuals
 phillipsRemNA$E <- e
 phillipsRemNA$E_1 <- c(NA, e[1:89])
 phillipsRemNA <- na.omit(phillipsRemNA)

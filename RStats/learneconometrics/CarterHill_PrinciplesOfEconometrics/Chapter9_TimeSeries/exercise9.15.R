@@ -38,3 +38,8 @@ sst <- sum( (banglaZero$E - mean(banglaZero$E))^2  )
 R2 <- 1 - sse/sst
 T <- 34
 LM <- T * R2; LM
+# now compare to chi-statistic and find p-value
+# df for chi statistic is = number of lagged residuals that are included
+df <- 1
+chi.star <- qchisq(0.95, df); chi.star
+p.value <- 1 - pchisq(LM, df); p.value   # reject the null! there is autocorrelation
