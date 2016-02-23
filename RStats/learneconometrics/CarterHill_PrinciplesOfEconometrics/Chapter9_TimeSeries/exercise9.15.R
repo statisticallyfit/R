@@ -43,3 +43,4 @@ LM <- T * R2; LM
 df <- 1
 chi.star <- qchisq(0.95, df); chi.star
 p.value <- 1 - pchisq(LM, df); p.value   # reject the null! there is autocorrelation
+
