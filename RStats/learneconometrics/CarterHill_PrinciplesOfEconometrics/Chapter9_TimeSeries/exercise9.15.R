@@ -20,26 +20,25 @@ summary(bangla.lm)
 
 autoplot(acf(bangla.lm$residuals, lag.max=34, plot=FALSE))
 
+# creating data.frame with NA removed
 e <- bangla.lm$residuals
 lnp <- banglaData$lnP  
 lna <- banglaData$lnA
-banglaRemNA <- data.frame(lnA=lna, lnA_1=c(NA, lna[1:33]), 
+banglaNA <- data.frame(lnA=lna, lnA_1=c(NA, lna[1:33]), 
                           lnP=lnp, lnP_1=c(NA, lnp[1:33]), 
                           E=e, E_1=c(NA, e[1:33]))
-banglaRemNA <- na.omit(banglaRemNA)
-head(banglaRemNA); tail(banglaRemNA)      
+banglaNA <- na.omit(banglaNA)
+head(banglaNA); tail(banglaNA)      
 
+banglaZero <- data.frame(lnA=lna, lnA_1=c(0, lna[1:33]), 
+                         lnP=lnp, lnP_1=c(0, lnp[1:33]), 
+                         E=e, E_1=c(0, e[1:33]))
+head(banglaZero); tail(banglaZero)
 
 
 # Part b) LM test of autocorrelation (joint test of acf values)
 
 # method (2) way
-e <- bangla.lm$residuals ; e
-banglaZero <- data.frame(lnA=lna, lnA_1=c(0, lna[1:33]), 
-                          lnP=lnp, lnP_1=c(0, lnp[1:33]), 
-                          E=e, E_1=c(0, e[1:33]))
-head(banglaZero); tail(banglaZero)
-
 lagrange.lm <- lm(data=banglaZero, E ~ lnP + E_1)
 summary(lagrange.lm)
 # calculate R^2 by hand
@@ -59,15 +58,14 @@ p.value <- 1 - pchisq(LM, df); p.value   # reject the null! there is autocorrela
 # Part c) calculating HAC stderrors for confidence intervals
 
 ### ??? how to do it if you have only 1 predictor??? cannot use examples12.R
-### wooldridge method
+### (wooldridge) method
 
 
 
 # Part d) estimating an AR(1) model
-ar.lm <- lm(data=banglaRemNA, lnA ~ lnP + lnA_1 + lnP_1)
+ar.lm <- lm(data=banglaNA, lnA ~ lnP + lnA_1 + lnP_1)
 summary(ar.lm)
-# df = nrow(banglaRemNA) - 2 = 29
-head(banglaRemNA)
+# df = nrow(banglaNA) - 2 = 29
+head(banglaNA)
 
-ar.phil.lm <- lm(data=phillipsRemNA, inf ~ du + inf_1 + du_1)
-summary(ar.phil.lm)
+
