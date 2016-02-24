@@ -107,7 +107,7 @@ phillipsData <- data.frame(inf=i,
                            #inf_1=c(NA, i[1:90]),
                            du=c(NA, d[1:90]))
                            #du_1=c(NA, NA, d[1:89])
-phillipsData <- na.omit(phillipsData)
+#phillipsData <- na.omit(phillipsData)
 head(phillipsData); tail(phillipsData)
 
 
@@ -120,18 +120,18 @@ e <- phillips.lm$residuals; length(e); head(e); tail(e)
 
 # creating data.frame of lag 1 errors
 phillipsNA_1 <- phillipsData # the _1 means it contains only up to lag E_1
-phillipsNA_1$E <- e
-phillipsNA_1$E_1 <- c(NA, e[1:89])
-phillipsNA_1 <- na.omit(phillipsNA_1)
+phillipsNA_1$E <- c(NA, e)
+phillipsNA_1$E_1 <- c(NA, NA, e[1:89])
+#phillipsNA_1 <- na.omit(phillipsNA_1)
 head(phillipsNA_1); tail(phillipsNA_1)
 nrow(phillipsNA_1)
 
 # now create the dataframe holding up to lag 4 errors
 phillipsNA_4 <- phillipsNA_1
-phillipsNA_4$E_2 <- c(NA, e[1:88])
-phillipsNA_4$E_3 <- c(NA, NA, e[1:87])
-phillipsNA_4$E_4 <- c(NA, NA, NA, e[1:86])
-phillipsNA_4 <- na.omit(phillipsNA_4)
+phillipsNA_4$E_2 <- c(NA, NA, NA, e[1:88])
+phillipsNA_4$E_3 <- c(NA, NA, NA, NA, e[1:87])
+phillipsNA_4$E_4 <- c(NA, NA, NA, NA, NA, e[1:86])
+#phillipsNA_4 <- na.omit(phillipsNA_4)
 head(phillipsNA_4); tail(phillipsNA_4); nrow(phillipsNA_4)
 
 ## set up data set with zero in place of ommitted row
@@ -153,13 +153,13 @@ head(phillipsZero_4); tail(phillipsZero_4); nrow(phillipsZero_4)
 ## method (1)
 lagrange.lm <- lm(data=phillipsNA_1, E ~ du + E_1)
 summary(lagrange.lm)    # df = N-2 = 89-2 = 87 (why df=86 in summary???)
-T <- nrow(phillipsNA_1)
+T <- nrow(na.omit(phillipsNA_1)); T
 LM <- T * 0.3102; LM # should be 27.6078
 
 lagrange.lm <- lm(data=phillipsNA_4, E ~ du + E_1 + E_2 + E_3 + E_4)
 summary(lagrange.lm)
-T <- nrow(phillipsNA_4)
-LM <- T * 0.3882; LM # should be 33.4 - good!
+T <- nrow(na.omit(phillipsNA_4)); T
+LM <- T * 0.3882; LM # should be 33.3852 ~ 33.4 - good!
 
 ## method (2)
 lagrange.lm <- lm(data=phillipsZero_1, E ~ du + E_1)
@@ -227,7 +227,7 @@ ar.phil.lm <- lm(data=phillipsNA_1_1, inf ~ du + inf_1 + du_1)
 summary(ar.phil.lm)
 
 
-## +++++ Wooldrdige steps
+## +++++ Wooldridge steps
 # step 1
 reg.lm <- lm(data=phillipsNA_1_1, inf ~ du)
 # step 2
@@ -236,10 +236,13 @@ errorNA_1 <- data.frame(E=e, E_1=c(NA, e[1:89]))
 head(errorNA_1); tail(errorNA_1)
 err.lm <- lm(data=errorNA_1, E ~ E_1); 
 sumry <- summary(err.lm)
-p <- sumry$coefficients[2]; p
+p <- sumry$coefficients[2]; p  # todo: p supposed to be 0.557 using wooldridge method
 # step 3
 head(phillipsNA_1_1)
 infDiffP <- phillipsNA_1_1$inf - p*phillipsNA_1_1$inf_1; infDiffP
 duDiffP <- phillipsNA_1_1$du - p*phillipsNA_1_1$du_1; duDiffP
 lm.3 <- lm(infDiffP ~ duDiffP)
-summary(lm.3)
+summary(lm.3) # B2 should be -0.6944 not -0.69166
+
+# todo: why are estimates not the same? Why isn't p the same as 0.557 
+# from (page 362) in carter hill

@@ -15,6 +15,7 @@ library(ggfortify)
 
 # Example 10.1
 phillips <- read.dta('phillips.dta')
+head(phillips)
 lm.10.1 <- lm(inf ~ unem, data=phillips)
 summary(lm.10.1)
 
@@ -30,11 +31,6 @@ lm.10.2 <- lm(i3 ~ inf + def, data=intdef)
 summary(lm.10.2)
 
 lm.10.2$residuals
-# OR
-intdef$i3 - lm.10.2$fitted.values
-lm.10.2$fitted.values
-lm.10.2$coefficients
-lm.10.2$model
 
 intdef.ts <- ts(data.frame(intdef[,2:3], def=intdef[,6]), start=1948)
 head(intdef.ts)
@@ -49,7 +45,6 @@ autoplot(intdef.ts, ts.size=1, ts.colour="blue")
 # Example 10.3
 prminwge <- read.dta('prminwge.dta')
 
-# this was without lprgnp and t before
 lm.10.3 <- lm(lprepop ~ lmincov + lusgnp , data=prminwge)
 summary(lm.10.3)
 
@@ -82,14 +77,13 @@ summary(lm.10.4.2)
 lm.10.4.2res <- lm(gfr ~ ww2 + pill, data=fertil3, subset=(is.na(pe_2)==FALSE))
 lm.10.4.2res #called the restricted model, and lm.10.4.2 is the unrestricted model
 lm.10.4.2
-anova(lm.10.4.2res, lm.10.4.2)
-
+anova(lm.10.4.2res, lm.10.4.2) # F = 3.973
 
 # Joint significance of lagged pe values
 lm.10.4.2res2 <- lm(gfr ~ pe + ww2 + pill, data=fertil3, subset=(is.na(pe_2)==FALSE))
 lm.10.4.2res2
 lm.10.4.2
-anova(lm.10.4.2res2, lm.10.4.2)
+anova(lm.10.4.2res2, lm.10.4.2) # F = 0.0534
 
 # Standard error of the long run propensity (running the theta=LRP regression
 # to get standard error of the coefficient on pe)
@@ -155,8 +149,8 @@ logInvpc.ts <- ts(hseinv$linvpc, start=1947, frequency = 1)
 logPrice.ts <- ts(hseinv$lprice, start=1947, frequency = 1)
 autoplot(logInvpc.ts, ts.size = 1)
 autoplot(logPrice.ts, ts.size = 1)
-autoplot(acf(logInvpc.ts), ts.size = 1)
-autoplot(acf(logPrice.ts), ts.size = 1)
+autoplot(acf(logInvpc.ts, plot=FALSE), ts.size = 1)
+autoplot(acf(logPrice.ts, plot=FALSE), ts.size = 1)
 
 lm.10.7.1 <- lm(linvpc ~ lprice, data=hseinv)
 summary(lm.10.7.1) # spurious regression
@@ -183,3 +177,46 @@ lm.10.8.2 <- lm(gfr ~ pe + ww2 + pill + t + tsq, data=fertil3)
 summary(lm.10.8.2)
 
 anova(lm.10.8.1, lm.10.8.2) #so model2 is much better due to quadratic trend. 
+
+
+
+# Example 10.9
+prminwge <- read.dta('prminwge.dta')
+
+lm.10.9 <- lm(lprepop ~ lmincov + lusgnp + t, data=prminwge)
+summary(lm.10.9)
+
+# Obtain results by detrending
+with(prminwge, {
+      yu <- lm(lprepop ~ t)$resid
+      x1u <- lm(lmincov ~ t)$resid
+      x2u <- lm(lusgnp ~ t)$resid
+      summary(lm(yu ~ x1u + x2u - 1))
+})
+
+
+
+# Example 10.10
+hseinv <- read.dta('hseinv.dta')
+
+with(hseinv,{
+      dtr.linvpc <- lm(linvpc ~ t)$resid
+      summary(lm(dtr.linvpc ~ lprice + t))
+})
+# Thus, movements in lprice about its trend have no explanatory power
+# R2=0.008) over movements in linvpc about its trend
+# Consistent with low significance of lprice in this last regression. 
+
+
+
+# Example 10.11
+barium <- read.dta('barium.dta')
+
+# using seasonal dummy variables
+lm.10.11 <- lm(lchnimp ~ lchempi + lgas + lrtwex + befile6 + affile6 + afdec6 +
+                   feb + mar + apr + may + jun + jul + 
+                   aug + sep + oct + nov + dec, data=barium)
+lm.10.11restricted <- lm(lchnimp ~ lchempi + lgas + lrtwex + 
+                               befile6 + affile6 + afdec6, data=barium)
+# F-test: are the coefficients on the months significantly different than 0?
+anova(lm.10.11,lm.10.11restricted)
