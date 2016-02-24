@@ -4,6 +4,8 @@
 
 setwd("/datascience/projects/statisticallyfit/github/learningprogramming/R/RStats/learneconometrics/CarterHill_PrinciplesOfEconometrics/Chapter9_TimeSeries")
 rm(list=ls())
+library(ggfortify)
+library(foreign)
 
 www <- "http://www.econometrics.com/comdata/hill4/okun.dat"
 okun <- read.table(www, header=TRUE)
@@ -215,7 +217,6 @@ phillipsZero_1_1 <- data.frame(inf=i,
                                inf_1=c(0, i[1:90]), 
                                du=c(0, d), 
                                du_1=c(0, 0, d[1:89]))
-phillipsNA_1_1 <- na.omit(phillipsNA_1_1)
 head(phillipsNA_1_1); tail(phillipsNA_1_1)
 head(phillipsZero_1_1); tail(phillipsZero_1_1)
 
@@ -224,3 +225,21 @@ head(phillipsZero_1_1); tail(phillipsZero_1_1)
 # p on inf_1 must be [0.557 with std error 0.09]
 ar.phil.lm <- lm(data=phillipsNA_1_1, inf ~ du + inf_1 + du_1)
 summary(ar.phil.lm)
+
+
+## +++++ Wooldrdige steps
+# step 1
+reg.lm <- lm(data=phillipsNA_1_1, inf ~ du)
+# step 2
+e <- reg.lm$residuals; e; length(e)
+errorNA_1 <- data.frame(E=e, E_1=c(NA, e[1:89]))
+head(errorNA_1); tail(errorNA_1)
+err.lm <- lm(data=errorNA_1, E ~ E_1); 
+sumry <- summary(err.lm)
+p <- sumry$coefficients[2]; p
+# step 3
+head(phillipsNA_1_1)
+infDiffP <- phillipsNA_1_1$inf - p*phillipsNA_1_1$inf_1; infDiffP
+duDiffP <- phillipsNA_1_1$du - p*phillipsNA_1_1$du_1; duDiffP
+lm.3 <- lm(infDiffP ~ duDiffP)
+summary(lm.3)
