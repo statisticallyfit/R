@@ -28,3 +28,4 @@ tail(salesNA_2)
 
 salesAR2.cutoff.lm <- lm(data=salesNA_cutoff, S ~ S_1 + S_2)
 summary(salesAR2.cutoff.lm)
+autoplot(ts(sales$sales))
