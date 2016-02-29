@@ -95,9 +95,10 @@ head(banglaNA)
 
 
 # Part e), are errors from ARDL(1, 1) serially correlated?
+# Correlogram
 autoplot(acf(ardl.lm$residuals, lag.max=34, plot=FALSE)) # nope...
-# LM test
 
+# LM test
 e <- ardl.lm$residuals; e; length(e)
 banglaNA_1 <- banglaData
 lna <- banglaData$lnA; lna
