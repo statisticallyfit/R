@@ -4,7 +4,7 @@ totalMultiplier <- function(lmObject){
       return(result[[1]])
 }
 
-
+# K = number of parameters including intercept
 modelCriteria <- function(y, yhat, K, lag) {
       sse <- sum( (y - yhat)^2 )
       N <- length(y) # Must equal length of yhat
