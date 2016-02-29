@@ -36,6 +36,8 @@ LM <- T*0.02489; LM    # TODO: why isn't LM = 7.405
 
 
 
+
+
 # Part b) repeat using AR(3) model
 growthNA_3 <- growthNA_2
 growthNA_3$G_3 <- c(NA, NA, NA, g[1:247])
