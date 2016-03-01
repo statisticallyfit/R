@@ -78,3 +78,19 @@ pValues$P[which(pValues$P <= 0.05)]
 pValues$CHISQ[which(pValues$P <= 0.05)]
 
 head(pValues, 4)
+
+
+
+
+## Part d) reestimate the equation with DU_2 and G_2 added separately, then together
+okunNA_2 <- okunNA_1
+okunNA_2$DU_2 <- c(NA, NA, NA, du[1:95])
+okunNA_2$G_2 <- c(NA, NA, g[1:96])
+head(okunNA_2); tail(okunNA_2)
+
+summary(lm(data=okunNA_2, DU ~ DU_1 + DU_2 + G + G_1))
+summary(lm(data=okunNA_2, DU ~ DU_1 +        G + G_1 + G_2))
+summary(lm(data=okunNA_2, DU ~ DU_1 + DU_2 + G + G_1 + G_2))
+
+
+# No, coefficients of DU_2 and G_2 are not significantly different than zero. 
