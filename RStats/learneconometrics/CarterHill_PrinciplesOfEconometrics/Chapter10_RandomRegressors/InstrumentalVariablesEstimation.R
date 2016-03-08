@@ -28,6 +28,7 @@ secondstage.m.lm <- lm(lnw ~ educFits + exp + exp2)
 # which shows that the IV/2SLS estimator is not efficient. 
 summary(original.lm)
 summary(firststage.m.lm)
+# These are the IV estimates
 summary(secondstage.m.lm)
 
 
@@ -42,7 +43,9 @@ summary(firststage.fm.lm)
 educFits <- firststage.fm.lm$fitted.values
 secondstage.fm.lm <- lm(lnw ~ educFits + exp + exp2 )
 summary(secondstage.m.lm)
+# These are the IV estimates
 summary(secondstage.fm.lm)
+
 
 
 
@@ -71,7 +74,7 @@ vhat <- firststage.fm.lm$residuals
 # So we are testing the significance of coefficient on VHAT.
 secondstage.hausman.lm <- lm(data=mroz, lnw ~ educ + exp + exp2 + vhat)
 # NOTE: these estimates are identical to instrumental variable estimates from
-# secondstage.fm.lm
+# secondstage.fm.lm IV estimation
 summary(secondstage.fm.lm)
 summary(secondstage.hausman.lm)
 # p-value from coefficient on vhat is not very significant but still concerning: 
@@ -81,6 +84,7 @@ summary(secondstage.hausman.lm)
 
 
 ## Sargan Test for instrumental validity
+secondstage.fm.lm <- lm(lnw ~ educFits + exp + exp2 )
 summary(secondstage.fm.lm)
 ehat <- secondstage.fm.lm$residuals
 secondstage.sargan.lm <- lm(data=mroz, ehat ~ mothereduc + fathereduc)
@@ -93,3 +97,8 @@ chi.crit <- qchisq(0.95, df=1); chi.crit
 # H0: surplus instrument is valid, H1: it is not, so fail to reject it is valid. 
 # so we are reassured that our instrumental variables estimator for wage equation
 # is consistent. 
+
+
+# Not quite the same... (source the Formulas.R file)
+ivreg2(form=lnw~exp + exp2 + educ, endog="educ", 
+      iv=c("mothereduc", "fathereduc"), data=na.omit(mroz))
