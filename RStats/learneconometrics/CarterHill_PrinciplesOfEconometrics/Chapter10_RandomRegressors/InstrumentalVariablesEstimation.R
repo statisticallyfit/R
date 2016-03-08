@@ -33,6 +33,7 @@ summary(secondstage.m.lm)
 
 
 
+
 ## Adding father's educ as instrumental variable
 
 firststage.fm.lm <- lm(data=mroz, educ ~ exp + exp2 + mothereduc + fathereduc)
@@ -61,8 +62,13 @@ cor(resE, resM) # partial since effects of other variables are netted out.
 
 
 ## Hausman Test for endogeneity (wage equation)
+firststage.fm.lm <- lm(data=mroz, educ ~ exp + exp2 + mothereduc + fathereduc)
 summary(firststage.fm.lm)
 vhat <- firststage.fm.lm$residuals
+# Since each instrument (mothereduc, fathereduc) is uncorrelated with the 
+# original regression error EHAT, then the endogeneous variable (educ) is
+# uncorrelated with EHAT only if VHAT is uncorrelated with EHAT.
+# So we are testing the significance of coefficient on VHAT.
 secondstage.hausman.lm <- lm(data=mroz, lnw ~ educ + exp + exp2 + vhat)
 # NOTE: these estimates are identical to instrumental variable estimates from
 # secondstage.fm.lm
