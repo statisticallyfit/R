@@ -87,7 +87,7 @@ summary(secondstage.hausman.lm)
 secondstage.fm.lm <- lm(lnw ~ educFits + exp + exp2 )
 summary(secondstage.fm.lm)
 ehat <- secondstage.fm.lm$residuals
-secondstage.sargan.lm <- lm(data=mroz, ehat ~ mothereduc + fathereduc)
+secondstage.sargan.lm <- lm(data=mroz, ehat ~ mothereduc + fathereduc + exp + exp2)
 s <- summary(secondstage.sargan.lm); s
 R2 <- s$r.squared; R2
 N <- nrow(mroz); N
