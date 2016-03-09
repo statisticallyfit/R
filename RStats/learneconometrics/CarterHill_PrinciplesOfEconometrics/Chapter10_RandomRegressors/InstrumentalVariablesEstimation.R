@@ -46,6 +46,9 @@ summary(secondstage.m.lm)
 # These are the IV estimates
 summary(secondstage.fm.lm)
 
+u.lm <- secondstage.fm.lm; summary(u.lm)
+r.lm <- lm(data=mroz, educ ~ exp + exp2)
+summary(r.lm)
 
 
 
