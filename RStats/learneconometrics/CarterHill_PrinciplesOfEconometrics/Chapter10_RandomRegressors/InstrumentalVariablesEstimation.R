@@ -46,9 +46,17 @@ summary(secondstage.m.lm)
 # These are the IV estimates
 summary(secondstage.fm.lm)
 
-u.lm <- secondstage.fm.lm; summary(u.lm)
-r.lm <- lm(data=mroz, educ ~ exp + exp2)
-summary(r.lm)
+# Doing F-test for instrument weakness
+# Method 1
+R2.u <- summary(lm(data=mroz, educ ~  exp + exp2 + mothereduc + fathereduc))$r.squared
+R2.r <- summary(lm(data=mroz, educ ~ exp + exp2))$r.squared
+R2.u; R2.r
+F.stat <- (R2.u - R2.r)/(1 - R2.u) * (423/2); F.stat
+F.crit <- qf(0.95, df1=423, df2=2); F.crit
+# Method 2
+u.lm <- lm(data=mroz, educ ~  exp + exp2 + mothereduc + fathereduc)
+r.lm <- lm(data=mroz, educ ~  exp + exp2)
+anova(r.lm, u.lm)
 
 
 

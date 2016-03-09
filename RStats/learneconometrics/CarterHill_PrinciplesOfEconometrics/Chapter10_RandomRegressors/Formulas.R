@@ -6,7 +6,7 @@ totalMultiplier <- function(lmObject){
 
 # K = number of parameters including intercept
 modelCriteria <- function(y, yhat, K, lag) {
-      sse <- sum( (y - yhat)^2 )
+      sse <- SSE(y, yhat)
       N <- length(y) # Must equal length of yhat
       aic <- log(sse/N) + 2*K/N
       bic <- log(sse/N) + K*log(N)/N
@@ -131,4 +131,15 @@ ivreg2 <- function(form,endog,iv,data,digits=3){
       }
       full <- list(results=res, weakidtest=firststage, endogeneity=hawu, overid=overid)
       return(full)
+}
+
+
+# takes observed (y) and fitted values (yhat) to calculate SSE
+SSE <- function(y, yhat){
+      return(sum( (y - yhat)^2 ))
+}
+
+# takes observed (y) values to calculate SST
+SST <- function(y) {
+      return(sum( (y - mean(y))^2 ))
 }

@@ -1,4 +1,5 @@
 setwd("/datascience/projects/statisticallyfit/github/learningprogramming/R/RStats/learneconometrics/CarterHill_PrinciplesOfEconometrics/Chapter10_RandomRegressors")
+source("/datascience/projects/statisticallyfit/github/learningprogramming/R/RStats/learneconometrics/CarterHill_PrinciplesOfEconometrics/Chapter10_RandomRegressors/Formulas.R")
 rm(list=ls())
 
 library(lmtest)
@@ -42,3 +43,21 @@ R2 <- s$r.squared; R2
 N <- 76
 NR2 <- N * R2; NR2
 X.crit <- qchisq(0.95, df=1); X.crit   # reject homoskedasticity
+
+
+## Part c) how do get White HAC stderrors?
+HACs <- summaryHAC(brumm.lm)
+HACs
+
+
+
+
+## Part d) creating IV estimates using 
+# 4 instrumentals: INITIAL, SCHOOL, INV, POPRATE
+# 1 endogeneous: OUTPUT
+brumm.lm
+firststage.lm <- lm(data=brumm, output ~ money + initial + school + inv + poprate)
+summary(firststage.lm)
+output.fits <- firststage.lm$fitted.values
+secondstage.lm <- lm(data=brumm, inflat ~ money + output.fits)
+summary(secondstage.lm)
