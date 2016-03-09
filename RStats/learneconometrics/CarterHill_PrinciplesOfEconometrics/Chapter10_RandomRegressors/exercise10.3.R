@@ -1,10 +1,4 @@
-setwd("/datascience/projects/statisticallyfit/github/
-      learningprogramming/R/RStats/learneconometrics/
-      CarterHill_PrinciplesOfEconometrics/Chapter10_RandomRegressors")
-source("/datascience/projects/statisticallyfit/github/
-       learningprogramming/R/RStats/learneconometrics/
-       CarterHill_PrinciplesOfEconometrics/Chapter10_RandomRegressors/
-       Formulas.R")
+setwd("/datascience/projects/statisticallyfit/github/learningprogramming/R/RStats/learneconometrics/CarterHill_PrinciplesOfEconometrics/Chapter10_RandomRegressors")
 rm(list=ls())
 
 library(lmtest)
