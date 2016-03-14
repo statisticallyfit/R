@@ -135,11 +135,7 @@ ivreg2 <- function(form,endog,iv,data,digits=3){
 
 
 # takes observed (y) and fitted values (yhat) to calculate SSE
-SSE <- function(y, yhat){
-      return(sum( (y - yhat)^2 ))
-}
+SSE <- function(y, yhat){ return(sum( (y - yhat)^2 ))}
 
 # takes observed (y) values to calculate SST
-SST <- function(y) {
-      return(sum( (y - mean(y))^2 ))
-}
+SST <- function(y) { return(sum( (y - mean(y))^2 ))}
