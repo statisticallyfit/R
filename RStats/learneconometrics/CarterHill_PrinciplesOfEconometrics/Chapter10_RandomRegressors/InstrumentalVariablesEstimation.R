@@ -36,6 +36,7 @@ summary(secondstage.m.lm)
 
 
 ## Adding father's educ as instrumental variable
+# educ = endogeneous variable
 
 firststage.fm.lm <- lm(data=mroz, educ ~ exp + exp2 + mothereduc + fathereduc)
 summary(firststage.fm.lm)
