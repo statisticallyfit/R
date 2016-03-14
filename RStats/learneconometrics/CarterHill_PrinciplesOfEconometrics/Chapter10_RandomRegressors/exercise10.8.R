@@ -114,4 +114,106 @@ iv <- ivreg2(form=hours~lnwage+educ+age+kidsl6+kids618+nwifeinc,
 
 
 
-## Part e)
+## Part e) Significance Joint F-test for instrumentals for each endog variable (educ, lnwage)
+n <- nrow(df); n
+k <- 11
+q <- 6
+
+# Joint F-test for educ
+educ.u.lm <- lm(data=df, educ ~ age + kidsl6 + kids618 + nwifeinc + 
+                               exper + exper2 + mothereduc + fathereduc + 
+                               heduc + siblings)
+educ.r.lm <- lm(data=df, educ ~ age + kidsl6 + kids618 + nwifeinc)
+Re.u <- summary(educ.u.lm)$r.sq; Re.u
+Re.r <- summary(educ.r.lm)$r.sq; Re.r
+F.stat <- (Re.u - Re.r)/(1 - Re.u) * (n-k-1)/q; F.stat
+# Doing it the easy way
+educ.ivreg <- ivreg2(form=hours~age + kidsl6 + kids618 + nwifeinc, data=df, digits=8, 
+       endog="educ", iv=c("exper", "exper2", "mothereduc", "fathereduc", 
+                          "heduc", "siblings"))
+educ.ivreg        # see? F-stat is 41.02 (strong instruments since 41.02 > 10)
+
+
+# Joint F-test for lnwage
+lnwage.u.lm <- lm(data=df, lnwage ~ age + kidsl6 + kids618 + nwifeinc + 
+                                 exper + exper2 + mothereduc + fathereduc + 
+                                 heduc + siblings)
+lnwage.r.lm <- lm(data=df, lnwage ~ age + kidsl6 + kids618 + nwifeinc)
+Rw.u <- summary(lnwage.u.lm)$r.sq; Rw.u
+Rw.r <- summary(lnwage.r.lm)$r.sq; Rw.r
+F.stat <- (Rw.u - Rw.r)/(1 - Rw.u) * (n-k-1)/q; F.stat
+# Doing it the easy way
+lnwage.ivreg <- ivreg2(form=hours~age + kidsl6 + kids618 + nwifeinc, data=df, digits=8, 
+                          endog="lnwage", iv=c("exper", "exper2", "mothereduc", "fathereduc", 
+                                             "heduc", "siblings"))
+lnwage.ivreg      # see? F-stat is 4.13 (weak instruments since 4.13 < 10)
+
+
+
+
+
+
+## Part f) Hasuman test for combined: EDUC and lnwage
+educ.vhat <- educ.u.lm$residuals
+lnwage.vhat <- lnwage.u.lm$residuals
+secondstage.H.lm <- lm(data=df, hours ~ lnwage + educ + age + kidsl6 + 
+                             kids618 + nwifeinc + educ.vhat + lnwage.vhat)
+summary(secondstage.H.lm)
+# Both vhats are significant so endogeneity exists in both educ and lnwage
+
+# Joint F-test
+u.lm <- secondstage.H.lm
+r.lm <- lm(data=df, hours ~ lnwage + educ + age + kidsl6 + 
+                 kids618 + nwifeinc)
+R.u <- summary(u.lm)$r.sq; R.u
+R.r <- summary(r.lm)$r.sq; R.r
+n <- nrow(df); n; q <- 2; k <- 9
+## TODO: not quite the same as it should be: 18.25
+F.stat <- (R.u - R.r)/(1 - R.u) * (n-k-1)/q; F.stat
+
+
+# TODO: how to do this via ivreg?
+#both.ivreg <- ivreg2(form=hours~age + kidsl6 + kids618 + nwifeinc, 
+#                       data=df, digits=8, endog=c("lnwage", "educ"), 
+#                       iv=c("exper", "exper2", "mothereduc", "fathereduc",
+#                            "heduc", "siblings"))
+#both.ivreg
+
+
+
+
+
+## Part g) compute iv estimates of Hours with endog=educ, lnwage
+educ.u.lm <- lm(data=df, educ ~ age + kidsl6 + kids618 + nwifeinc + 
+                      exper + exper2 + mothereduc + fathereduc + 
+                      heduc + siblings)
+lnwage.u.lm <- lm(data=df, lnwage ~ age + kidsl6 + kids618 + nwifeinc + 
+                        exper + exper2 + mothereduc + fathereduc + 
+                        heduc + siblings)
+educ.fit <- educ.u.lm$fitted.values
+lnwage.fit <- lnwage.u.lm$fitted.values
+secondstage.IV.lm <- lm(data=df, hours ~ lnwage.fit + educ.fit + 
+                              age + kidsl6 + kids618 + nwifeinc)
+summary(secondstage.IV.lm)
+
+## TODO
+# Need to use the ivreg2 function to get correct stderrors. How???
+
+
+
+
+
+## Part h) test overidentifying restrictions (Sargan)
+# H0: surplus instruments are valid
+ehat <- secondstage.IV.lm$residuals
+overid.lm <- lm(data=df, ehat ~ lnwage + educ + age + kidsl6 + kids618 +
+                      nwifeinc + exper + exper2 + mothereduc + fathereduc + 
+                      heduc + siblings)
+R2 <- summary(overid.lm)$r.sq; R2   # R2 should be 0.006232
+N <- nrow(df); N
+NR <- N * R2; NR                    # NR2 should be 2.6673, p-value is 0.6149
+L <- 6; B <- 2; DF <- L-B
+X.crit <- qchisq(0.95, DF); X.crit
+# So do not reject H0, so surplus instruments have no evidence of invalidity
+
+## TODO: how to do the ivreg test to get Sargan F-test statistic???
