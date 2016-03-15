@@ -17,9 +17,12 @@ newbroiler$lnq_1 <- log(newbroiler$qprod_1)
 head(newbroiler)
 dat <- newbroiler[11:50,]
 ## TODO: the intercept is NOT the same!!!
+
 broiler.lm <- lm(data=dat, lnq ~ lnp + lnpf + lnq_1 + year)
 summary(broiler.lm)
 
+# The coefficients:
+summary(broiler.lm)$coeff[,1]
 
 
 
