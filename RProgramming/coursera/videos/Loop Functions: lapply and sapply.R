@@ -30,3 +30,4 @@ lapply(x, mean)
 sapply(x, mean)
 class(lapply(x, mean))
 class(sapply(x, mean))
+
