@@ -93,6 +93,9 @@ summary(two.sls)
 
 # Sargan's Test for surplus (overidentifying) instruments
 iv <- ivreg2(form = lnqprod ~ lnp + lnpf + time + lnqprod_1, 
-       endog = "lnp", iv = c("lnpf", "time", "lnqprod_1", "DLY",
-                             "DLPB", "lnexpts"), 
+       endog = c("lnqprod", "lnp"), 
+       iv = c("lnpf", "time", "lnqprod_1", "DLY", "DLPB", "lnexpts"), 
        data = broiler, digits=7)
+
+## INCOMPLETE: also do the F-test on page 415 of solutions manual. 
+## interpret the Sargan result above - not working
