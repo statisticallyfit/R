@@ -139,3 +139,4 @@ SSE <- function(y, yhat){ return(sum( (y - yhat)^2 ))}
 
 # takes observed (y) values to calculate SST
 SST <- function(y) { return(sum( (y - mean(y))^2 ))}
+
