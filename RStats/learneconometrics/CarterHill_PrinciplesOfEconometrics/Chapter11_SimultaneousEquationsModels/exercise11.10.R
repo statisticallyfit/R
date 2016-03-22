@@ -95,3 +95,39 @@ lnQS.ols.lm <- lm(data=fish, lquan ~ lprice + stormy)
 summary(lnQS.ols.lm)
 lnQS.structural.lm <- lm(data=fish, lquan ~ lnP.fit + stormy)
 summary(lnQS.structural.lm)
+
+
+
+
+
+## Part e) Use MIXED for supply, and previous for demand
+lnP.reduced.lm <- lm(data=fish, lprice ~ mon + tue + wed + thu + 
+                           stormy + rainy + cold + mixed)
+summary(lnP.reduced.lm)
+
+## Testing significance of all coefs but stormy and mixed in reduced lnP
+u.lm <- lnP.reduced.lm
+r.lm <- lm(data=fish, lprice ~ stormy + mixed)
+anova(r.lm, u.lm)
+# So cannot reject null that they aren't equal to zero. Therefore, 
+# adding MIXED has not helped. 
+
+
+
+
+## Part f) estimate the supply and demand by 2SLS from above and OLS
+lnP.fit <- lnP.reduced.lm$fitted.values
+# demand
+lnQD.ols.lm <- lm(data=fish, lquan ~ lprice + mon + tue + wed + 
+                        thu + rainy + cold)
+summary(lnQD.ols.lm)
+lnQD.structural.lm <- lm(data=fish, lquan ~ lnP.fit + mon + tue + wed + 
+                               thu + rainy + cold)
+summary(lnQD.structural.lm) 
+# supply
+lnQS.ols.lm <- lm(data=fish, lquan ~ lprice + stormy + mixed)
+summary(lnQS.ols.lm)
+lnQS.structural.lm <- lm(data=fish, lquan ~ lnP.fit + stormy + mixed)
+summary(lnQS.structural.lm)    ## TODO: why aren't std.errors the same??
+# BEfore, std.errors were not same for lnQD but now for lnQS. 
+
