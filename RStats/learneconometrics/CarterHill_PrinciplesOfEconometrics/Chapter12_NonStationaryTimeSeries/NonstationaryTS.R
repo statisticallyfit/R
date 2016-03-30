@@ -12,7 +12,6 @@ library(systemfit)                  ## for automatic 2sls
 
 
 
-
 ## Estimating the models randwalk1 and randwalk2 in regression
 spurious <- read.dta("spurious.dta")
 rw1.lm <- lm(data=spurious, rw1 ~ rw2)
