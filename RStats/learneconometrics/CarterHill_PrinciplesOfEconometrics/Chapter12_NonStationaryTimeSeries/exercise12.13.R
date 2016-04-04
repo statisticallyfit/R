@@ -61,8 +61,13 @@ u_1 <- c(NA, u[1:167])
 e_1 <- c(NA, e[1:167])
 de <- c(NA, diff(e))
 du <- c(NA, diff(u))
+
+# HELP - why such a different formula in solutions page 451?
 past.lm <- lm(u_1 ~ e_1); summary(past.lm)
 res <- c(NA, past.lm$residuals)
 vec.lm <- lm(du ~ res + de)
 
-summary(vec.lm)
+
+# second model
+second.lm <- lm(du ~ res + de)
+summary(second.lm)
