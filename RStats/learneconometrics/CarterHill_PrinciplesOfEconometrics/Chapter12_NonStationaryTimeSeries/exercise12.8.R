@@ -94,4 +94,18 @@ dickeyFullerTest(diff(diff(g)), useTrend=FALSE, k = 0)
 
 # INF - check for how many augmentation terms
 ddi.lm <- lm(ddi ~ di + di_1)
-autoplot(acf(ddi.lm$residuals, lag.max=20, plot=FALSE)) # so k = 0
+autoplot(acf(ddi.lm$residuals, lag.max=20, plot=FALSE)) # so k = 1
+# TODO - why does book say 7 terms since 1 is enough... ???
+
+# Their TAU = -4.627 ... ??
+dickeyFullerTest(diff(diff(i)), useTrend = F, k = 7)
+
+
+
+
+
+
+
+## Part c) forecast and predict
+
+# Why do the equations need to be estimated using G_1 = 0 and I_1 = 0 ? 
