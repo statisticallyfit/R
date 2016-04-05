@@ -62,6 +62,7 @@ e_1 <- c(NA, e[1:167])
 de <- c(NA, diff(e))
 du <- c(NA, diff(u))
 
+
 # HELP - why such a different formula in solutions page 451?
 past.lm <- lm(u_1 ~ e_1); summary(past.lm)
 res <- c(NA, past.lm$residuals)
@@ -71,3 +72,30 @@ vec.lm <- lm(du ~ res + de)
 # second model
 second.lm <- lm(du ~ res + de)
 summary(second.lm)
+
+
+
+
+sample <- data.frame(u=u, e=e)
+vecm <- ca.jo(sample, ecdet="const")
+vecm.ols <- cajools(vecm)
+summary(vecm.ols)
+?ca.jo
+summary(vecm)
+?cajools
+
+#install.packages("tsDyn")
+library(tsDyn)
+
+vecm <- VECM(sample, lag = 1)
+vecm
+data("zeroyld")
+data <- zeroyld
+head(data)
+
+library(vars)
+data(Canada)
+ve <- ca.jo(Canada, spec="transitory")
+ve
+ca.jo(sample)
+?ca.jo
