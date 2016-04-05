@@ -51,5 +51,5 @@ da <- c(NA, diff(a))
 u <- gdp$usa
 du <- c(NA, diff(u))
 
-DAUS.lm <- lm(data=gdp, da ~ e_1); summary(DAUS.lm)
-DUSA.lm <- lm(data=gdp, du ~ e_1); summary(DUSA.lm)
+aus.vec.lm <- lm(data=gdp, da ~ e_1); summary(DAUS.lm)
+usa.vec.lm <- lm(data=gdp, du ~ e_1); summary(DUSA.lm)

@@ -87,3 +87,20 @@ dickeyFullerTest <- function(v, useTrend=FALSE, k=0){
       return(tau)
 }
 
+
+# v = values vector
+# k = num lags
+generateDiffedLags <- function(v, k) {
+      n <- length(v)
+      dv <- c(NA, diff(v))
+      data <- data.frame(dv=dv)
+      c <- ncol(data) + 1
+      for(i in 1:k){
+            diffedLag <- c(rep(NA, i), dv[1:(n-i)])
+            label <- paste("dv_", i)
+            data$label <- diffedLag
+            #data[, c] <- diffedLag
+            c <- c + 1
+      }
+      return (data)
+}
