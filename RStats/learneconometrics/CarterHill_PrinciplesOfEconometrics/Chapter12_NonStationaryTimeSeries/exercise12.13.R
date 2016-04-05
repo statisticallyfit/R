@@ -15,8 +15,9 @@ e <- ukpi$euro
 
 # UK level test
 # TAU = 0.9962 > -3.41 so nonstationary
-ur <- ur.df(u, type="trend", lags=5)
+ur <- ur.df(u, type="trend", lags=5); ur
 autoplot(acf(ur@res))# How many augmentation terms? 
+
 
 
 # UK first difference

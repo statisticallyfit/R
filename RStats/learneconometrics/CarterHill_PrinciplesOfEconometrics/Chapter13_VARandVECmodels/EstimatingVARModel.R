@@ -5,6 +5,7 @@ rm(list=ls())
 library(tsDyn)
 library(ggplot2)
 library(foreign)
+library(ggfortify)
 library(reshape2)
 library(urca)
 # Data from: http://www.principlesofeconometrics.com/poe4/poe4stata.htm
@@ -23,11 +24,11 @@ ggplot() +
 # Step 1 - make sure they are I(1) variables (must also check for stationarity in differenced form)
 # TAU -1.995 > -2.87 so nonstationary
 c.df <- ur.df(fred$c, type="drift", lags = 3); c.df
-autoplot(acf(c.df@res)) # shouldn't go up to 8...?
+autoplot(acf(c.df@res, lag.max = 20, plot=FALSE)) # shouldn't go up to 8...?
 
 # TAU -2.741 > -2.87 so nonstationary
 y.df <- ur.df(fred$y, type="drift", lags = 0); y.df
-autoplot(acf(y.df@res))
+autoplot(acf(y.df@res, lag.max = 20, plot=FALSE))
 
 
 # Step 2 - make sure they are NOT cointegrated
@@ -56,4 +57,4 @@ c.var.lm <- lm(dc ~ dc_1 + dy_1)
 summary(c.var.lm)
 y.var.lm <- lm(dy ~ dy_1 + dc_1)
 summary(y.var.lm)
-generateDiffedLags(c, 1)
+
