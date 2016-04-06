@@ -12,6 +12,11 @@ library(urca)
 ukpi <- read.dta("ukpi.dta")
 u <- ukpi$uk
 e <- ukpi$euro
+ukpi$time <- seq(1, 168)
+ggplot() + 
+      geom_line(data=ukpi, aes(x=time, y=euro), lwd=1, colour="blue") +
+      geom_line(data=ukpi, aes(x=time, y=uk), lwd=1, colour="red")
+
 
 # UK level test
 # TAU = 0.9962 > -3.41 so nonstationary
@@ -54,7 +59,10 @@ autoplot(acf(ur@res))
 cointegration.lm <- lm(u ~ e)
 summary(cointegration.lm)
 # TAU 0.179 > -3.37 so spuriously related
-ur.df(cointegration.lm$residuals, type="none", lags=0)
+ur <- ur.df(cointegration.lm$residuals, type="none", lags=0); ur
+
+# automatic test (I made)
+cointegrationTest(u, e)
 
 
 # Error correction model: 
@@ -73,5 +81,6 @@ vec.lm <- lm(du ~ res + de)
 # second model
 second.lm <- lm(du ~ res + de)
 summary(second.lm)
+
 
 

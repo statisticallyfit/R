@@ -133,3 +133,10 @@ makeLags <- function(v, from, to){
       data$v <- NULL
       return (data)
 }
+
+# v1, v2 = the data vectors that are supposedly cointegrated
+cointegrationTest <- function(v1, v2){
+      cointegration.lm <- lm(v1 ~ v2)
+      # from urca package
+      ur.df(cointegration.lm$residuals, type="none", lags=0)@teststat[1]
+}
