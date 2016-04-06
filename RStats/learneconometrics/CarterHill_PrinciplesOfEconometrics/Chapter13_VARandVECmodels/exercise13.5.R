@@ -43,4 +43,4 @@ cointegrationTest(gdp, type="none")
 
 # Part c) estimate the VEC model
 gdp$time <- NULL
-VEC(gdp, type="const")
+VEC(gdp, type="const") #my custom function (using VECM underneath)

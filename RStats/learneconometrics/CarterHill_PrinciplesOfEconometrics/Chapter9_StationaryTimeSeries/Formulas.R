@@ -39,6 +39,25 @@ SST <- function(y) {
 
 
 
+# Given restricted and unrestricted models, 
+# do joint F-test but give Chi square instead of F
+# J = number of restrictions
+anovaChiSquare <- function(r.lm, u.lm, J){
+      F.stat.list <- anova(r.lm, u.lm)$F
+      F.stat <- F.stat.list[length(F.stat.list)]
+      chi.stat <- F.stat * J
+      p.value <- 1-pchisq(chi.stat, df=J)
+      cat("##################################################\n")
+      cat("######        Analysis Of Variance         #######\n")
+      cat("##################################################\n")
+      cat("                                                  \n")
+      cat(" Chi-statistic:                        ", chi.stat, "\n")
+      cat(" F-statistic:                          ", F.stat, "\n")
+      cat(" p-value:                              ", p.value, "\n")
+}
+
+
+
 # Written by John Fox to calculate HAC standard errors
 # source: http://novicemetrics.blogspot.ro/2011/04/video-tutorial-on-robust-standard.html
 summaryHAC <- function(model, type=c("hc3", "hc0", "hc1", "hc2", "hc4"), ...){
@@ -151,7 +170,8 @@ makeLags <- function(v, from, to){
       return (data)
 }
 
-# v1, v2 = the data vectors that are supposedly cointegrated
+# data[,1] = y, data[,2]=x holds the data vectors that are 
+#     supposedly cointegrated
 # returns the lagged residuals to make it useful for estimating VEC model
 # CORRECTION: now returns residuals from dickey fuller test of 
 #     cointegrating residuals to know how many lags to include
@@ -217,7 +237,10 @@ cointegrationTest <- function(data, type, lags = 0){
 # data must only have two columns (y first then x)
 # type must either be: "none", "const", "trend", or "both"
 VEC <- function(data, type, lag = 0){
-      suppressWarnings(VECM(ts(data), lag=lag, 
+      v <- suppressWarnings(VECM(ts(data), lag=lag, 
                             r=1, include=type, estim="2OLS"))
+      cat(v$coefficients)
+      v$residuals <- data.frame(y=v$residuals[,1], x=v$residuals[,1])
+      return(invisible(v$residuals))
 }
 

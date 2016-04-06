@@ -6,7 +6,6 @@ library(foreign)
 library(ggfortify)
 library(urca)
 library(vars)
-library(lme4)
 # Data from: http://www.principlesofeconometrics.com/poe4/poe4stata.htm
 
 
@@ -15,8 +14,8 @@ library(lme4)
 fred <- read.dta("fred.dta")
 fred$time <- seq(1, 200)
 ggplot() + 
-      geom_line(data=fred, aes(x=time, y=c), lwd=1, colour="royalblue") + 
-      geom_line(data=fred, aes(x=time, y=y), lwd=1, colour="deeppink")
+      geom_line(data=fred, aes(x=time, y=c), lwd=1, colour="purple") + 
+      geom_line(data=fred, aes(x=time, y=y), lwd=1, colour="orange")
 
 # Nonstationary
 c.df <- ur.df(fred$c, type="trend", lags = 3); c.df
@@ -45,7 +44,7 @@ head(fred.diffed)
 var <- VAR(fred.diffed, p=1, type="const")
 summary(var)
 
-# how many lags to include?
+# How many lags to include?
 
 # autocorr is eliminated with p=3
 var <- VAR(fred.diffed, p=3, type="const")
@@ -62,18 +61,38 @@ summary(var$varresult$dy)
 
 # DC Joint test for both lag 1 coeffs = 0 (meaning dc.l1 and dy.l1 = 0)
 r.lm <- lm(data=var$datamat, dc ~ dc.l2 + dy.l2 + dc.l3 + dy.l3)
-u.lm <- lm(data=var$datamat, dc ~ dc.l2 + dy.l2 + dc.l3 + dy.l3 + 
-                 dc.l1 + dy.l1)
+u.lm <- lm(data=var$datamat, 
+           dc ~ dc.l1 + dy.l1 + dc.l3 + dy.l3 + dc.l2 + dy.l2)
 # CHI = F * J, where J = number of restrictions
-J <- 2
-chi.stat <- anova(r.lm, u.lm)$F[2] * J ; chi.stat
-p.value <- 1-pchisq(chi.stat, df=J); p.value
+anovaChiSquare(r.lm, u.lm, J=2)
 
 
 
 # DC Joint test for both lag 2 coeffs = 0
 r.lm <- lm(data=var$datamat, dc ~ dc.l1 + dy.l1 + dc.l3 + dy.l3)
-u.lm <- lm(data=var$datamat, dc ~ dc.l1 + dy.l1 + dc.l3 + dy.l3 + 
-                 dc.l2 + dy.l2)
-chi.stat <- anova(r.lm, u.lm)$F[2] * J; chi.stat
-p.value <- 1-pchisq(chi.stat, df=J); p.value
+anovaChiSquare(r.lm, u.lm, J=2)
+
+
+# DC Joint test for both lag 3 coeffs = 0
+r.lm <- lm(data=var$datamat, dc ~ dc.l1 + dy.l1 + dc.l2 + dy.l2)
+anovaChiSquare(r.lm, u.lm, J=2)
+
+
+# DY Joint test for both lag 1 coeffs = 0
+r.lm <- lm(data=var$datamat, dy ~ dc.l2 + dy.l2 + dc.l3 + dy.l3)
+u.lm <- lm(data=var$datamat, 
+           dy ~ dc.l1 + dy.l1 + dc.l3 + dy.l3 + dc.l2 + dy.l2)
+anovaChiSquare(r.lm, u.lm, J=2)
+
+# DY Joint test for both lag 2 coeffs = 0
+r.lm <- lm(data=var$datamat, dy ~ dc.l1 + dy.l1 + dc.l3 + dy.l3)
+anovaChiSquare(r.lm, u.lm, J=2)
+
+# DY Joint test for both lag 3 coeffs = 0
+r.lm <- lm(data=var$datamat, dy ~ dc.l1 + dy.l1 + dc.l2 + dy.l2)
+anovaChiSquare(r.lm, u.lm, J=2)
+
+
+
+# Come back to test SUR (page 463 pdf in solutions manual, pg 511 in book)
+
