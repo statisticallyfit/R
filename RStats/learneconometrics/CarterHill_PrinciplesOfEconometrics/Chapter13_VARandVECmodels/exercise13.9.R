@@ -22,3 +22,9 @@ autoplot(acf(res, lag.max = 20, plot=FALSE))
 res <- VEC(qtm, type="const", lag = 1)
 autoplot(acf(res$y, lag.max = 20, plot=FALSE))
 autoplot(acf(res$x, lag.max = 20, plot=FALSE))
+
+v <- suppressWarnings(VECM(ts(qtm), lag=1, 
+                           r=1, include="const", estim="2OLS"))
+v
+cat("hi")
+cat("   there")
