@@ -239,8 +239,21 @@ cointegrationTest <- function(data, type, lags = 0){
 VEC <- function(data, type, lag = 0){
       v <- suppressWarnings(VECM(ts(data), lag=lag, 
                             r=1, include=type, estim="2OLS"))
-      cat(v$coefficients)
+      
+      topLeft <- v$coefficients[1]
+      botLeft <- v$coefficients[2]
+      topRight <- v$coefficients[3]
+      botRight <- v$coefficients[4]
+      
+      yName <- names(data)[1]
+      xName <- names(data)[2]
+      
+      cat("                   ECT     Intercept\n")
+      cat("Equation ", yName, " ", topLeft, " ", topRight, "\n", sep="")
+      cat("Equation ", xName, " ", botLeft, " ", botRight, "\n", sep="")
+      
       v$residuals <- data.frame(y=v$residuals[,1], x=v$residuals[,1])
+      
       return(invisible(v$residuals))
 }
 
