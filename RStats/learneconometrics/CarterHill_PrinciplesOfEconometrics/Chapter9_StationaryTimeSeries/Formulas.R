@@ -21,6 +21,23 @@ modelCriteria <- function(y, yhat, K, lag) {
 }
 
 
+# same SSE as for ANOVA as one from SUMMARY
+SSE <- function(y, yhat) {
+      return(sum( (y - yhat)^2 ))
+}
+# OR
+#a <- anova(lm)
+#ss <- a$`Sum Sq`
+#return(ss[length(ss)])
+# OR
+#s <- summary(r.lm)
+#(1-s$r.squared)*SST(var$datamat$dc)
+
+SST <- function(y) {
+      return(sum( (y - mean(y))^2 ))
+}
+
+
 
 # Written by John Fox to calculate HAC standard errors
 # source: http://novicemetrics.blogspot.ro/2011/04/video-tutorial-on-robust-standard.html
@@ -135,8 +152,72 @@ makeLags <- function(v, from, to){
 }
 
 # v1, v2 = the data vectors that are supposedly cointegrated
-cointegrationTest <- function(v1, v2){
-      cointegration.lm <- lm(v1 ~ v2)
+# returns the lagged residuals to make it useful for estimating VEC model
+# CORRECTION: now returns residuals from dickey fuller test of 
+#     cointegrating residuals to know how many lags to include
+# Precondition: in data, y is first col, x is second, time is third
+# type is either "none", "constant", or "trend"
+cointegrationTest <- function(data, type, lags = 0){
+      yName <- names(data)[1]
+      xName <- names(data)[2]
+      y <- data[,1]
+      x <- data[,2]
+      if(type == "trend") t <- data[,3]
+      
+      cointeg.lm <- ""
+      if (type == "none")          cointeg.lm <- lm(y ~ x + 0)
+      else if (type == "constant") cointeg.lm <- lm(y ~ x)
+      else if (type == "trend")    cointeg.lm <- lm(y ~ x + t)
+      
       # from urca package
-      ur.df(cointegration.lm$residuals, type="none", lags=0)@teststat[1]
+      ur <- ur.df(cointeg.lm$res, type="none", lags=lags)
+      testStatistic <- ur@teststat[1]
+      df.resids <- ur@res
+      
+      cat("##################################################\n")
+      cat("######         Cointegration Test          #######\n")
+      cat("##################################################\n")
+      cat("                                                  \n")
+      cat(" Cointegrating equation: \n")
+      
+      if (type == "none"){
+            b <- cointeg.lm$coefficients[[1]]
+            cat(" ", yName, " = ", b, " (", xName, ")", "\n", sep="")
+      }
+      else if(type == "constant"){
+            a <- cointeg.lm$coefficients[[1]]
+            b <- cointeg.lm$coefficients[[2]]
+            cat(" ", yName, " = ", a, " + ", b, " (", xName, ")", 
+                "\n", sep="")
+      } else if (type == "trend"){
+            a <- cointeg.lm$coefficients[[1]]
+            b <- cointeg.lm$coefficients[[2]]
+            tCoef <- cointeg.lm$coefficients[[3]]
+            cat(" ", yName, " = ", a, " + ", b, " (", xName, ")", 
+                " + ", tCoef, " (t)","\n", sep="")
+      }
+      
+      cat("                                                  \n")
+      
+      criticalValue <- 0
+      if (type == "none")          criticalValue <- -2.76
+      else if (type == "constant") criticalValue <- -3.37
+      else if (type == "trend")    criticalValue <- -3.42
+      cat(" test statistic:                        ", testStatistic, "\n")
+      cat(" critical value:                        ", criticalValue, "\n")
+      
+      if (testStatistic > criticalValue)
+            cat("\n\n Result: Not cointegrated -> spurious regression")
+      else 
+            cat("\n\n Result: Cointegrated")
+      #return (invisible(cointeg.lm$residuals))
+      return (invisible(df.resids))
 }
+
+# data must only have two columns (y first then x)
+# type must either be: "none", "const", "trend", or "both"
+VEC <- function(data, type, lag = 0){
+      suppressWarnings(VECM(ts(data), lag=lag, 
+                            r=1, include=type, estim="2OLS"))
+}
+
