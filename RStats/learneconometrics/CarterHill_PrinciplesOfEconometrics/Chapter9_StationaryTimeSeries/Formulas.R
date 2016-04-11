@@ -177,7 +177,9 @@ makeLags <- function(v, from, to){
 #     cointegrating residuals to know how many lags to include
 # Precondition: in data, y is first col, x is second, time is third
 # type is either "none", "constant", or "trend"
-cointegrationTest <- function(data, type, lags = 0){
+# lags = number of lags to include in dickey fuller test of stationary 
+# for the cointeg.lm's residuals
+cointegrationTest <- function(data, type, resid.lags = 0){
       yName <- names(data)[1]
       xName <- names(data)[2]
       y <- data[,1]
@@ -190,7 +192,7 @@ cointegrationTest <- function(data, type, lags = 0){
       else if (type == "trend")    cointeg.lm <- lm(y ~ x + t)
       
       # from urca package
-      ur <- ur.df(cointeg.lm$res, type="none", lags=lags)
+      ur <- ur.df(cointeg.lm$res, type="none", lags=resid.lags)
       testStatistic <- ur@teststat[1]
       df.resids <- ur@res
       
@@ -239,21 +241,8 @@ cointegrationTest <- function(data, type, lags = 0){
 VEC <- function(data, type, lag = 0){
       v <- suppressWarnings(VECM(ts(data), lag=lag, 
                             r=1, include=type, estim="2OLS"))
-      
-      topLeft <- v$coefficients[1]
-      botLeft <- v$coefficients[2]
-      topRight <- v$coefficients[3]
-      botRight <- v$coefficients[4]
-      
-      yName <- names(data)[1]
-      xName <- names(data)[2]
-      
-      cat("                   ECT     Intercept\n")
-      cat("Equation ", yName, " ", topLeft, " ", topRight, "\n", sep="")
-      cat("Equation ", xName, " ", botLeft, " ", botRight, "\n", sep="")
-      
+      print(v$coefficients)
       v$residuals <- data.frame(y=v$residuals[,1], x=v$residuals[,1])
-      
       return(invisible(v$residuals))
 }
 

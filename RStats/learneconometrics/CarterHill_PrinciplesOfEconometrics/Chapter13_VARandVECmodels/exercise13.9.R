@@ -11,20 +11,31 @@ library(vars)
 
 
 
+## Part a) determine the cointegrating relationship between P and M - is the
+# quantity theory of money supported? 
 ## Part c) confirm the residuals are I(0) (so cointegration exists)
+
 qtm <- read.dta("qtm.dta")
 qtm <- data.frame(p=qtm$p, m=qtm$m)
+qtm.diff <- data.frame(dp=diff(qtm$p), dm=diff(qtm$m))
 
 # TODO: why isn't equation same as theirs? 
-res <- cointegrationTest(qtm, type="constant", lags = 1)
+# TAU must be -3.663 so the series should be cointegrated. 
+res <- cointegrationTest(qtm, type="constant", resid.lags = 1)
 autoplot(acf(res, lag.max = 20, plot=FALSE))
 
-res <- VEC(qtm, type="const", lag = 1)
+
+
+
+
+
+## Part b) identify the error-correcting coefficients. Is system stable?
+## Part d)
+
+# TODO: not even the VEC ECT coeffs are not opposite signs... 
+# OF course the VECM is not the same as in book if residuals aren't
+# the same as in book. 
+res <- VEC(qtm.diff, type="none", lag = 1)
 autoplot(acf(res$y, lag.max = 20, plot=FALSE))
 autoplot(acf(res$x, lag.max = 20, plot=FALSE))
 
-v <- suppressWarnings(VECM(ts(qtm), lag=1, 
-                           r=1, include="const", estim="2OLS"))
-v
-cat("hi")
-cat("   there")
