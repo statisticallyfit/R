@@ -184,7 +184,15 @@ cointegrationTest <- function(data, type, resid.lags = 0){
       xName <- names(data)[2]
       y <- data[,1]
       x <- data[,2]
-      if(type == "trend") t <- data[,3]
+      t <- 0
+      if(type == "trend") {
+            if (ncol(data) != 3) {
+                  cat("\nERROR: Need to include a 'time' column", "\n")
+                  return(invisible(0))
+            } else {
+                  t <- data[,3]
+            }
+      }
       
       cointeg.lm <- ""
       if (type == "none")          cointeg.lm <- lm(y ~ x + 0)
@@ -238,11 +246,15 @@ cointegrationTest <- function(data, type, resid.lags = 0){
 
 # data must only have two columns (y first then x)
 # type must either be: "none", "const", "trend", or "both"
+# lag = numbre of lagged terms to incldue in the VEC model
 VEC <- function(data, type, lag = 0){
+      # if 3 cols, assume 3rd is time and delete it
+      if(ncol(data) == 3) data[,3] <- NULL
       v <- suppressWarnings(VECM(ts(data), lag=lag, 
                             r=1, include=type, estim="2OLS"))
-      print(v$coefficients)
-      v$residuals <- data.frame(y=v$residuals[,1], x=v$residuals[,1])
+      print(summary(v))
+      
+      v$residuals <- data.frame(y=v$residuals[,1], x=v$residuals[,2])
       return(invisible(v$residuals))
 }
 

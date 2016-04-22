@@ -12,7 +12,8 @@ library(urca)
 
 
 
-fred <- read.dta("fred.dta")
+fred <- read.dta("fred.dta"); head(fred)
+fred.diff <- data.frame(dc=diff(fred$c), dy=diff(fred$y))
 fred$time <- seq(1, 200)
 ggplot() + 
       geom_line(data=fred, aes(x=time, y=c), lwd=1, color="purple") + 
@@ -53,8 +54,12 @@ y <- fred$y
 dy <- c(NA, diff(y))
 dy_1 <- c(NA, dy[1:199])
 
-c.var.lm <- lm(dc ~ dc_1 + dy_1)
+c.var.lm <- lm(dc ~ dc_1 + dy_1 + 0); c.var.lm
 summary(c.var.lm)
-y.var.lm <- lm(dy ~ dy_1 + dc_1)
+y.var.lm <- lm(dy ~ dy_1 + dc_1 + 0); y.var.lm
 summary(y.var.lm)
 
+
+var <- VAR(fred.diff, type="none", p=1)
+var
+summary(var)

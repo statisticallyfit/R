@@ -15,7 +15,7 @@ library(vars)
 vec <- read.dta("vec.dta")
 vec <- data.frame(y=vec$y, x=vec$x)
 cointegrationTest(vec, type="none")
-res <- VEC(vec, type="const")
+res <- VEC(vec, type="none")
 # the residuals should not be autocorrelated - they're not!
 autoplot(acf(res$y, lag.max = 20, plot=FALSE), main="y ACFs")
 autoplot(acf(res$x, lag.max = 20, plot=FALSE), main="x ACFs")
