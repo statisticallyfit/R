@@ -36,3 +36,5 @@ library(rugarch)
 garch.spec <- ugarchspec(variance.model=list(garchOrder=c(1,1)), 
                          mean.model=list(armaOrder=c(0, 0)))
 #garch.fit <- 
+
+# failed to install rugarch so going to look in ALL my files to see how I did this last time, there was a special place to install it from
