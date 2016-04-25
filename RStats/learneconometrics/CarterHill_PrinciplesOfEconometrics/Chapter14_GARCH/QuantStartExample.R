@@ -48,7 +48,16 @@ autoplot(acf(ftfinal.arima$residuals^2, plot=FALSE)) # yes,due to sercorrelation
 
 
 ## (4) Step 4 - fit a GARCH model to the errors
+## TODO: is this fitting garch to residuals or to actual data FTSE? 
+## TODO: is p and q in garch(p,q) the same as in ARIMA(p,d,q)? 
 ft.garch <- garch(ft, trace=FALSE)
 summary(ft.garch)
 
 ft.res <- ft.garch$residuals[-1] # the first is NA
+
+
+
+
+## (5) Step 5 - test if the GARCH fit to the residuals is good. 
+autoplot(acf(ft.res, plot=FALSE)) # yes, good
+autoplot(acf(ft.res^2, plot=FALSE)) # yes, good since cond.heter. has been removed
