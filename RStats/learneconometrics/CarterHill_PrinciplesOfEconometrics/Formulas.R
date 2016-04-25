@@ -395,10 +395,28 @@ archEffectsTest <- function(rtn, lags){
 # this fits an ARCH(p) model
 # Returns the error variance function which models the conditional
 # heteroskedasticity in original time series. 
-# data = vector, not data.frame
-# lags = number of lagged squared error terms in error variance func.
-ARCH <- function(data, lags){
-      #library(fGarch)
-      garch <- garchFit(~garch(lags, 0), data=data, trace=F)
-      return(garch@fit$matcoef)
+# data = data.frame
+# p = num lags of error - represents AR(p) component
+ARCH <- function(data, p){
+      library(fGarch)
+      formula <- formula(paste("~garch(", p, ",", 0, ")", sep=""))
+      garch <- garchFit(data=data, formula, trace=F)
+      print(garch@fit$matcoef)
+      autoplot(ts(garch@h.t), main="Conditional heteroskedasticity function")
+      return(invisible(garch))
+}
+
+
+
+# this fits an GARCH(p,q) model
+# Returns the error variance function which models the conditional
+# heteroskedasticity in original time series. 
+# data = data.frame
+# p = num lags of error - represents AR(p) component
+# q = num lags of variance - represents the MA(q) component
+GARCH <- function(data, p, q){
+      library(fGarch)
+      formula <- formula(paste("~garch(", p, ",", q, ")", sep=""))
+      garch <- garchFit(data=data, formula, trace=F)
+      print(garch@fit$matcoef)
 }
