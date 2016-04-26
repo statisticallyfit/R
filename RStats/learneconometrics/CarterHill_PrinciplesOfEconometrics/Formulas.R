@@ -1,4 +1,4 @@
-descriptiveStats <- function(x) {
+describe <- function(x) {
       library(fBasics); library(tseries)
       print(basicStats(x))
       j <- jarque.bera.test(x)
@@ -198,42 +198,73 @@ summaryHAC <- function(model, type=c("hc3", "hc0", "hc1", "hc2", "hc4"), ...){
 
 
 
-
+# Tests the vector time series data for stationarity 
 # Input vector (v) of values
 # Finds the t-(tau)statistic from regression deltaValue = laggedValue + error
-# k = number of diffed lags needed to reduce autocorrelation in errors
-# ct = constant and trenddickeyFullerTest <- function(v, useTrend=FALSE, k=0)
-dickeyFullerTest <- function(v, useTrend=FALSE, k=0){
-      n <- length(v)
-      #v_1 <- c(NA, v[1:(n-1)])
-      #dv <- c(NA, diff(v))
-      #data <- data.frame(dv=dv, v_1=v_1)
+# diffed.lags = number of diffed lags needed to reduce error autocorrelation
+dickeyFullerTest <- 
+      function(v, type=c("none", "drift", "trend"), diffed.lags){
       
-      # Creating the diffed lags
-      data.diffedLag0 <- makeDiffedLags(v, from=0, to=k)
-      data.lag1 <- makeLags(v, from=1, to=1)
-      data <- cbind(data.lag1, data.diffedLag0)
-      if(useTrend)
-            data$trend <- seq(1:n)
-      #if(k != 0){
-      #      c <- ncol(data) + 1
-      #      for(i in 1:k){
-      #            diffedLag <- c(rep(NA, i), dv[1:(n-i)])
-      #            data[, c] <- diffedLag
-      #            c <- c + 1
-      #      }
-      #}
-      # Find the regression 
-      numCols <- ncol(data)
-      lm <- ""
-      if(numCols == 2){
-            lm <- lm(dv ~ v_1, data=data)     
-      }else {# error - just need to make sure to get right tau and right reg
-            lm <- lm(dv ~ ., data=data[ , 2:numCols])
-      }      
-      tau <- summary(lm)$coefficients[2,3]
-      return(tau)
+      library(urca)
+      
+      ur <- ur.df(v, type=type, lags=diffed.lags)
+      tau.statistic <- ur@teststat[1,1]
+      critical.value <- ur@cval[1,2]
+      
+      cat("###################################################################\n")
+      cat("####      Augmented Dickey Fuller Test for Stationarity       #####\n")
+      cat("###################################################################\n")
+      cat("                                                                   \n")
+      cat(" Testing equation: \n")
+      print(ur@testreg$coefficients)
+      cat("\n")
+      
+      cat(" tau statistic:                         ", tau.statistic, "\n")
+      cat(" critical value:                        ", critical.value, "\n")
+      
+      if (tau.statistic < critical.value)
+            cat("\n Result: Stationary")
+      else 
+            cat("\n Result: Not enough evidence to reject non-stationarity")
+      
+      # returning the residuals from dickey fuller to test if autocorrelation
+      # left and if so, the user must increase the lags. 
+      return (invisible(ur@res))
 }
+
+
+
+#dickeyFullerStationarityTest <- function(v, useTrend=FALSE, k=0){
+#      n <- length(v)
+#      #v_1 <- c(NA, v[1:(n-1)])
+#      #dv <- c(NA, diff(v))
+#      #data <- data.frame(dv=dv, v_1=v_1)
+#      
+#      # Creating the diffed lags
+#      data.diffedLag0 <- makeDiffedLags(v, from=0, to=k)
+#      data.lag1 <- makeLags(v, from=1, to=1)
+#      data <- cbind(data.lag1, data.diffedLag0)
+#      if(useTrend)
+#            data$trend <- seq(1:n)
+#      #if(k != 0){
+#      #      c <- ncol(data) + 1
+#      #      for(i in 1:k){
+#      #            diffedLag <- c(rep(NA, i), dv[1:(n-i)])
+#      #            data[, c] <- diffedLag
+#      #            c <- c + 1
+#      #      }
+#      #}
+#      # Find the regression 
+#      numCols <- ncol(data)
+#      lm <- ""
+#      if(numCols == 2){
+#            lm <- lm(dv ~ v_1, data=data)     
+#      }else {# error - just need to make sure to get right tau and right reg
+#            lm <- lm(dv ~ ., data=data[ , 2:numCols])
+#      }      
+#      tau <- summary(lm)$coefficients[2,3]
+#      return(tau)
+#}
 
 
 # v = dataframe with one column on values

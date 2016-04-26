@@ -29,30 +29,36 @@ arch.fit@fit$matcoef
 
 
 
-## Estimate the GARCH
-# method 1
+
+## Estimate the GARCH model
+
+# method 1 - use garchFit() method from Library(fGarch)
 garch <- GARCH(byd, p=1, q=1)
 
-# method 2 (different answer)
-garch.spec <- ugarchspec(variance.model=list(model="fGarch", 
-                                            submodel="TGARCH",
-                                            garchOrder=c(1,0)), 
-                        mean.model=list(armaOrder=c(0, 0)))
+# method 2 - use rugarch (slightly different answers)
+garch.spec <- ugarchspec(variance.model=list(garchOrder=c(1,1)), 
+                          mean.model=list(armaOrder=c(0, 0)))
 garch.fit <- ugarchfit(spec=garch.spec, data=byd)
 garch.fit@fit$matcoef
 
 
-# method 3 (different answer)
-fit <- garchFit(~aparch(1,1), data=byd, delta=2, include.delta = F, trace=F)
-fit@fit$matcoef
 
+## Estimate the T-GARCH model
 
-
-# method 4 - why slightly different? is this asymmetric? 
-garch.spec <- ugarchspec(variance.model=list(garchOrder=c(1,1)), 
+# method 1 
+tgarch.spec <- ugarchspec(variance.model=list(model="fGarch", 
+                                            submodel="TGARCH",
+                                            garchOrder=c(1,1)), 
                         mean.model=list(armaOrder=c(0, 0)))
-garch.fit <- ugarchfit(spec=garch.spec, data=byd, solver.control = list(trace=0))
-garch.fit@fit$matcoef
+tgarch.fit <- ugarchfit(spec=tgarch.spec, data=byd)
+tgarch.fit@fit$matcoef
+
+
+# method 2 (different answer)
+tgarchFit <- garchFit(~aparch(1,1), data=byd, 
+                     delta=2, include.delta = F, trace=F)
+tgarchFit@fit$matcoef
+
 
 
 
