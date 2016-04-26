@@ -33,6 +33,12 @@ arch.fit@fit$matcoef
 # method 1
 garch <- GARCH(byd, p=1, q=1)
 
+
+fit <- garchFit(~aparch(1,1), data=byd, delta=2, include.delta = F, trace=F)
+fit@fit$matcoef
+
+
+
 # method 2 - why slightly different? is this asymmetric? 
 garch.spec <- ugarchspec(variance.model=list(garchOrder=c(1,1)), 
                         mean.model=list(armaOrder=c(0, 0)))
