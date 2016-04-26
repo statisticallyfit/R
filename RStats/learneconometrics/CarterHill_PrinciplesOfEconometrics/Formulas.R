@@ -400,10 +400,10 @@ archEffectsTest <- function(rtn, lags){
 ARCH <- function(data, p){
       library(fGarch)
       formula <- formula(paste("~garch(", p, ",", 0, ")", sep=""))
-      garch <- garchFit(data=data, formula, trace=F)
-      print(garch@fit$matcoef)
-      autoplot(ts(garch@h.t), main="Conditional heteroskedasticity function")
-      return(invisible(garch))
+      arch <- garchFit(data=data, formula, trace=F)
+      print(arch@fit$matcoef)
+      #autoplot(ts(arch@h.t), main="Conditional heteroskedasticity function")
+      return(invisible(arch))
 }
 
 
@@ -419,4 +419,5 @@ GARCH <- function(data, p, q){
       formula <- formula(paste("~garch(", p, ",", q, ")", sep=""))
       garch <- garchFit(data=data, formula, trace=F)
       print(garch@fit$matcoef)
+      return(invisible(garch))
 }

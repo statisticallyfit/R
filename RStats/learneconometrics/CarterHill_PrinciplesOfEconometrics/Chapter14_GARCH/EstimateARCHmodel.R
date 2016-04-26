@@ -5,20 +5,46 @@ library(foreign)
 library(tseries)
 library(fGarch)
 library(reshape2)
+#install.packages("rugarch")
+library(rugarch)
 
 # Tells which models to pick for garch: 
 # http://yunus.hacettepe.edu.tr/~iozkan/eco665/archgarch.html
+# Asks if it's possible to estimate asymmetric GARCH? 
+# https://stat.ethz.ch/pipermail/r-sig-finance/2011q3/008339.html
+
 
 
 byd <- read.dta("byd.dta")
 
-# Estimate the ARCH: 
-ARCH(byd, p=1)
+## Estimate the ARCH: 
+# method 1
+arch <- ARCH(byd, p=1)
 
-# Estimate the GARCH
-GARCH(byd, p=1, q=1)
+# method 2 - why slightly different? is this asymmetric? 
+arch.spec <- ugarchspec(variance.model=list(garchOrder=c(1,0)), 
+                         mean.model=list(armaOrder=c(0, 0)))
+arch.fit <- ugarchfit(spec=arch.spec, data=byd)
+arch.fit@fit$matcoef
 
-autoplot(ts(byd$r))
+
+
+## Estimate the GARCH
+# method 1
+garch <- GARCH(byd, p=1, q=1)
+
+# method 2 - why slightly different? is this asymmetric? 
+garch.spec <- ugarchspec(variance.model=list(garchOrder=c(1,1)), 
+                        mean.model=list(armaOrder=c(0, 0)))
+garch.fit <- ugarchfit(spec=garch.spec, data=byd)
+garch.fit@fit$matcoef
+
+
+
+
+
+# Graph
+autoplot(ts(byd$r), main="BYD Returns")
 autoplot(ts(arch@h.t), main="Conditional Heteroskedasticity function")
 
 d <- data.frame(time=seq(1,500), returns=byd$r, variance=arch@h.t)
@@ -29,12 +55,3 @@ ggplot(data=d, aes(x=time)) +
 d.melt <- melt(d, id="time"); head(melt)
 ggplot(data=d.melt, aes(x=time, y=value, colour=variable)) + geom_line()
 
-
-
-#install.packages("rugarch")
-library(rugarch)
-garch.spec <- ugarchspec(variance.model=list(garchOrder=c(1,1)), 
-                         mean.model=list(armaOrder=c(0, 0)))
-#garch.fit <- 
-
-# failed to install rugarch so going to look in ALL my files to see how I did this last time, there was a special place to install it from
