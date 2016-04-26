@@ -17,10 +17,14 @@ ggplot() +
       geom_line(data=gdp, aes(x=time, y=usa), lwd=1, colour="maroon1") + 
       geom_line(data=gdp, aes(x=time, y=aus), lwd=1, colour="dodgerblue") 
 
+# lags is how many diffed lags to include (put as many until auto.corr is gone)
 usa.df <- ur.df(gdp$usa, type="trend", lags=1); usa.df
+usa.df@testreg
 autoplot(acf(usa.df@res, lag.max = 20, plot=FALSE))  # one term needed
 
+# lags = 0 so zero diffed lags. 
 aus.df <- ur.df(gdp$aus, type="trend", lags=0); aus.df
+aus.df@testreg
 autoplot(acf(aus.df@res, lag.max = 20, plot=FALSE)) # ok so no augmentation terms are needed
 
 # TAUs are too small so nonstationary

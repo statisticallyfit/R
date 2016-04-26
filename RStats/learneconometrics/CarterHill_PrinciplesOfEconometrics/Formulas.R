@@ -1,3 +1,44 @@
+descriptiveStats <- function(x) {
+      library(fBasics); library(tseries)
+      print(basicStats(x))
+      j <- jarque.bera.test(x)
+      s <- j$statistic
+      p <- j$p.value
+      invisible(cat("Jarque-Bera: ", s, "   p-value:  ",  j$p.value, "\n\n"))
+}
+
+
+
+skewness <- function(x) {
+      m3 <- mean((x - mean(x))^3)
+      return(m3/(sd(x))^3)
+}
+
+kurtosis <- function(x) {
+      m4 <- mean((x - mean(x))^4)
+      return(m4/(sd(x))^4 - 3)
+}
+
+
+
+
+# same SSE as for ANOVA as one from SUMMARY
+SSE <- function(y, yhat) {
+      return(sum( (y - yhat)^2 ))
+}
+# OR
+#a <- anova(lm)
+#ss <- a$`Sum Sq`
+#return(ss[length(ss)])
+# OR
+#s <- summary(r.lm)
+#(1-s$r.squared)*SST(var$datamat$dc)
+
+SST <- function(y) {
+      return(sum( (y - mean(y))^2 ))
+}
+
+
 
 totalMultiplier <- function(lmObject){
       result <- sum(lmObject$coefficients) - lmObject$coefficients[1]
@@ -106,24 +147,6 @@ ivreg2 <- function(form,endog,iv,data,digits=3){
       return(full)
 }
 
-
-
-
-# same SSE as for ANOVA as one from SUMMARY
-SSE <- function(y, yhat) {
-      return(sum( (y - yhat)^2 ))
-}
-# OR
-#a <- anova(lm)
-#ss <- a$`Sum Sq`
-#return(ss[length(ss)])
-# OR
-#s <- summary(r.lm)
-#(1-s$r.squared)*SST(var$datamat$dc)
-
-SST <- function(y) {
-      return(sum( (y - mean(y))^2 ))
-}
 
 
 
