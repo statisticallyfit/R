@@ -19,10 +19,10 @@ byd <- read.dta("byd.dta")
 
 ## Estimate the ARCH: 
 # method 1
-arch <- ARCH(byd, p=1)
+byd.arch <- ARCH(byd, p=1)
 
 # method 2 - why slightly different? is this asymmetric? 
-arch.spec <- ugarchspec(variance.model=list(garchOrder=c(1,0)), 
+arch.spec <- ugarchspec(variance.model=list(garchOrder=c(1,0)),
                          mean.model=list(armaOrder=c(0, 0)))
 arch.fit <- ugarchfit(spec=arch.spec, data=byd)
 arch.fit@fit$matcoef
@@ -52,14 +52,14 @@ tgarch.spec <- ugarchspec(variance.model=list(model="fGarch",
                         mean.model=list(armaOrder=c(0, 0)))
 tgarch.fit <- ugarchfit(spec=tgarch.spec, data=byd)
 tgarch.fit@fit$matcoef
-
+?ugarchspec
 
 # method 2 (different answer)
 tgarchFit <- garchFit(~aparch(1,1), data=byd, 
                      delta=2, include.delta = F, trace=F)
 tgarchFit@fit$matcoef
 
-
+?garchFit
 
 
 
