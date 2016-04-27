@@ -54,9 +54,16 @@ tgarch.fit <- ugarchfit(spec=tgarch.spec, data=byd)
 tgarch.fit@fit$matcoef
 ?ugarchspec
 
-# method 2 (different answer)
+
+# method 2
+tgarch.spec <- ugarchspec(variance.model = list(garchOrder=c(1,1)), 
+                          mean.model = list(armaOrder=c(0,0)))
+tgarch.fit <- ugarchfit(spec=tgarch.spec, data=byd)
+tgarch.fit@fit$coef
+
+# method 3 (different answer)
 tgarchFit <- garchFit(~aparch(1,1), data=byd, 
-                     delta=2, include.delta = F, trace=F)
+                      delta=2, include.delta = F, trace=F)
 tgarchFit@fit$matcoef
 
 ?garchFit
