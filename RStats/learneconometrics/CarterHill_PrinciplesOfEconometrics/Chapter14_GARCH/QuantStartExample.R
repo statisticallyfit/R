@@ -7,6 +7,7 @@ rm(list=ls())
 
 getSymbols("^FTSE")
 
+
 # calculate the differences of logs of closing price
 ftrt <- diff(log(Cl(FTSE)))
 ft <- as.numeric(ftrt)
@@ -15,7 +16,13 @@ head(ftrt)
 autoplot(ts(ft)) # very clear volatility changes
 
 
-## (1) Step 1 - fit a model to the data, in this case, ARIMA(p,d,q) model. 
+## (1) Step 1 - check the time series is stationary
+mean(ft)
+res <- dickeyFullerTest(ft, type="none", diffed.lags = 7)
+autoplot(acf(res, lag.max = 50, plot = FALSE))
+
+
+## (2) Step 2 - fit a model to the data, in this case, ARIMA(p,d,q) model. 
 ftfinal.aic <- Inf
 ftfinal.arima <- ""
 ftfinal.order <- c(0,0,0)
@@ -34,20 +41,20 @@ ftfinal.arima
 
 
 
-## (2) Step 2 - do the residuals of this model show discrete white noise? 
+## (3) Step 3 - do the residuals of this model show discrete white noise? 
 autoplot(acf(ftfinal.arima$residuals, plot=FALSE)) # yes
 
 
 
 
-## (3) Step 3 - do the squared residuals indicate conditional 
+## (4) Step 4 - do the squared residuals indicate conditional 
 # heteroskedasticity in FTSE? 
 autoplot(acf(ftfinal.arima$residuals^2, plot=FALSE)) # yes,due to sercorrelation. 
 
 
 
 
-## (4) Step 4 - fit a GARCH model to the errors
+## (5) Step 5 - fit a GARCH model to the errors
 ## TODO: is this fitting garch to residuals or to actual data FTSE? 
 ## TODO: is p and q in garch(p,q) the same as in ARIMA(p,d,q)? 
 ft.garch <- garch(ft, trace=FALSE)
@@ -58,6 +65,6 @@ ft.res <- ft.garch$residuals[-1] # the first is NA
 
 
 
-## (5) Step 5 - test if the GARCH fit to the residuals is good. 
+## (6) Step 6 - test if the GARCH fit to the residuals is good. 
 autoplot(acf(ft.res, plot=FALSE)) # yes, good
 autoplot(acf(ft.res^2, plot=FALSE)) # yes, good since cond.heter. has been removed

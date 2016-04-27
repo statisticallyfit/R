@@ -1,7 +1,6 @@
 ## SOURCE: 
 # https://faculty.chicagobooth.edu/ruey.tsay/teaching/introTS/garchM.R
 
-
 MGARCH11 <- function(rtn,type=1){
       # Estimation of a Gaussian GARCH(1,1)-M model.
       ##### The program uses GARCH(1,1) results as initial values.
@@ -28,7 +27,7 @@ MGARCH11 <- function(rtn,type=1){
       ### Pass model information via defining global variable
       Vtmp <<- c(type,v1[1])
       #
-      fit=suppressWarnings(nlminb(start = params, objective= glkM, lower=lowBounds, upper=uppBounds))
+      fit=nlminb(start = params, objective= glkM, lower=lowBounds, upper=uppBounds)
       ##,control=list(trace=3,rel.tol=1e-5))
       epsilon = 0.0001 * fit$par
       npar=length(params)

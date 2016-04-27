@@ -1,10 +1,21 @@
 describe <- function(x) {
-      library(fBasics); library(tseries)
-      print(basicStats(x))
+      library(tseries)
+      invisible(cat("\nObs:          ", length(x), "\n"))
+      invisible(cat("NAs:          ", sum(is.na(x)), "\n"))
+      invisible(cat("min:          ", min(x), "\n"))
+      invisible(cat("max:          ", max(x), "\n"))
+      invisible(cat("\nmean:         ", mean(x), "\n"))
+      invisible(cat("median:       ", median(x), "\n"))
+      invisible(cat("std.dev:      ", sd(x), "\n"))
+      invisible(cat("variance:     ", var(x), "\n"))
+      invisible(cat("skewness:     ", skewness(x), "\n"))
+      invisible(cat("kurtosis:     ", kurtosis(x), "\n"))
+      
       j <- jarque.bera.test(x)
       s <- j$statistic
       p <- j$p.value
-      invisible(cat("Jarque-Bera: ", s, "   p-value:  ",  j$p.value, "\n\n"))
+      invisible(cat("\nJarque-Bera:  ", j$statistic, "\n"))
+      invisible(cat("p-value:      ", j$p.value, "\n\n"))
 }
 
 
@@ -406,23 +417,23 @@ VEC <- function(data, type, lag = 0){
 # rtn = time series
 # lags = number of lags to put into the error regression equation
 # This answers the question: Do we need ARCH model? 
-archEffectsTest <- function(rtn, lags){
+archTest <- function(rtn, order.lags){
       # Perform Lagrange Multiplier Test for ARCH effect of a time series
       # rtn: time series
       # m: selected AR order
       #
       y <- (rtn - mean(rtn))^2
       T <- length(rtn)
-      atsq <- y[(lags + 1):T]
-      x <- matrix(0, (T - lags), lags)
-      for (i in 1:lags){
-            x[,i] <- y[(lags + 1 - i):(T - i)]
+      atsq <- y[(order.lags + 1):T]
+      x <- matrix(0, (T - order.lags), order.lags)
+      for (i in 1:order.lags){
+            x[,i] <- y[(order.lags + 1 - i):(T - i)]
       }
       md <- lm(atsq ~ x)
       # now this is my work: 
       R.squared <- summary(md)$r.squared
-      LM.statistic <- (T - lags) * R.squared
-      chi.critical <- qchisq(0.95, df=lags)
+      LM.statistic <- (T - order.lags) * R.squared
+      chi.critical <- qchisq(0.95, df=order.lags)
       
       cat("###########################################################\n")
       cat("####     Lagrange-Multiplier Test for ARCH effects     ####\n")
@@ -475,3 +486,9 @@ GARCH <- function(data, p, q){
       print(garch@fit$matcoef)
       return(invisible(garch))
 }
+
+
+## implement list: 
+#### 1) lagrange multiplier test for error autocorrelation
+#### 2) TGARCH and TARCH
+#### 3) GARCH-in-mean and ARCH-in-mean

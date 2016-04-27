@@ -27,7 +27,7 @@ jarque.bera.test(euro$r) # so definitely not normal
 
 
 ## Part c)
-archEffectsTest(euro$r, lags=1)
+archTest(euro$r, order.lags=1)
 # so yes there are arch effects
 
 

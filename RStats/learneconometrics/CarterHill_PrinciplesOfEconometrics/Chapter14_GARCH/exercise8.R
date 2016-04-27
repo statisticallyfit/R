@@ -25,8 +25,8 @@ autoplot(acf(arch@residuals^2, lag.max = 30, plot = FALSE))
 
 describe(sp$r)
 ggplot(data=sp, aes(x=r)) + geom_histogram(fill="coral")
-autoplot(ts(sp$r))
-autoplot(ts(arch@h.t))
+autoplot(ts(sp$r), main="Time series")
+autoplot(ts(arch@h.t), main="Conditional heteroskedasticity")
 
 
 
@@ -34,13 +34,25 @@ autoplot(ts(arch@h.t))
 ## Part b) estimate TARCH
 
 # method 1 - but this looks like ARCH(1) not TARCH(1)
-tarch.spec <- ugarchspec(variance.model = list(garchOrder=c(1,0)), 
-                          mean.model = list(armaOrder=c(0,0)))
-tarch.fit <- ugarchfit(spec=tarch.spec, data=sp)
-tarch.fit@fit$coef
+#tarch.spec <- ugarchspec(variance.model = list(model="sGARCH",
+#                                               submodel="TGARCH", 
+#                                               garchOrder=c(1, 0)), 
+#                         mean.model = list(armaOrder=c(0, 0)))
+#tarch.fit <- ugarchfit(spec=tarch.spec, data=sp)
+#tarch.fit@fit$coef
+
 
 # method 2 - not same as in book
-tarchFit <- garchFit(~aparch(1,0), data=byd, 
+tarchFit <- garchFit(~aparch(1,0), data=sp, 
                       delta=2, include.delta = F, trace=F)
 tarchFit@fit$matcoef
 
+
+
+
+
+## Part d) compare TARCH and ARCH
+tarchFit@fit$matcoef
+arch@fit$matcoef
+# since the coefficient on the TARCH asymmetric term (gamma1) is 
+# significant, then that means the TARCH is better than the ARCH
