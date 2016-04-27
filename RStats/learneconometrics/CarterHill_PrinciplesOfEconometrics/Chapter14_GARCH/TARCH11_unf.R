@@ -15,8 +15,11 @@ TARCH1 <- function(data, p){
       ht <- rep(0, n); ht[1] <- h.1
       delta <- sapply(vt, function(elem) {if(elem < 0) 1 else 0})
       
+      omega <- 1e-6
+      alpha <- 0.1 # specifies model of order 1
+      #beta <- 0.8 # specifies model of order 1
       for(i in 2:n) {
-            ht[i] <- (1 + delta[i-1]) * et[i-1]^2 
+            ht[i] <- et[i-1]^2  + delta[i-1] * et[i-1]^2 
             et[i] <- vt[i] * sqrt(ht[i])
       }
       
