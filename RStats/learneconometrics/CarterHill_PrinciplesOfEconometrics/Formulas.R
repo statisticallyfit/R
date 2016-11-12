@@ -74,7 +74,7 @@ modelCriteria <- function(y, yhat, K, lag) {
 
 
 
-
+# copied this code (did not make)
 ivreg2 <- function(form,endog,iv,data,digits=3){
       # library(MASS)
       # model setup
